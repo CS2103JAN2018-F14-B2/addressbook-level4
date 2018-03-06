@@ -842,7 +842,7 @@ Priorities: High (must have) - `* * \*`, Medium (nice to have) - `* \*`, Low (un
 
 |`* *` |user |check who is my assistance for the day/particular patient |brief them in advance
 
-|`* *` |user |have reminders sms sent to pet owners automatically 2 days before appointment 
+|`* *` |user |have reminders sms sent to pet owners automatically 2 days before appointment
 
 |`* *` |user |check services consumed for a particular appointment |know what a patient has gone through
 
