@@ -800,15 +800,59 @@ Priorities: High (must have) - `* * \*`, Medium (nice to have) - `* \*`, Low (un
 |Priority |As a ... |I want to ... |So that I can...
 |`* * *` |new user |see usage instructions |refer to instructions when I forget how to use the App
 
-|`* * *` |user |add a new person |
+|`* * *` |user |create patient profile |register its information
 
-|`* * *` |user |delete a person |remove entries that I no longer need
+|`* * *` |user |find a patient by name |locate details of patient without having to go through the entire list
 
-|`* * *` |user |find a person by name |locate details of persons without having to go through the entire list
+|`* * *` |user |add appointments |schedule meeting with owners
 
-|`* *` |user |hide <<private-contact-detail,private contact details>> by default |minimize chance of someone else seeing them by accident
+|`* * *` |user |find owner's contact number |
 
-|`*` |user with many persons in the address book |sort persons by name |locate a person easily
+|`* * *` |user |search for an animal's medical history |know next step of treatment
+
+|`* * *` |user |list out appointments for next day |know what to prepare
+
+|`* * *` |user |classify types of appointments |organize the appointments better
+
+|`* * *` |user |cancel an appointment |make space in schedule for other things
+
+|`* * *` |user |see future appointments |know how to plan my works
+
+|`* * *` |user |list out appointments for today |prepare for the work
+
+|`* * *` |user |list out patients of a specific species |contact then for blood donation
+
+|`* * *` |user |log in with passwords |protect my patients' information
+
+|`* * *` |user |reschedule an appointment |make time for emergency situations
+
+|`* * *` |user |search for owner |which patient animal belongs to that person
+
+|`* * *` |user |create owner profiles |
+
+|`* * *` |user |add in owner details such as contact number |contact them when needed
+
+|`* * *` |user |update patients' information |
+
+|`* * *` |user |see owner's name when checking patients' profile |know who it belongs to
+
+|`* *` |user |delete a patient after certain period |remove entries that I no longer need
+
+|`* *` |user |update status of patient (living, deceased) |know the number of pets I am managing now
+
+|`* *` |user |check who is my assistance for the day/particular patient |brief them in advance
+
+|`* *` |user |have reminders sms sent to pet owners automatically 2 days before appointment
+
+|`* *` |user |check services consumed for a particular appointment |know what a patient has gone through
+
+|`* *` |user |update my status |be recognized as an official vet after my training
+
+|`* *` |user |transfer a patient from my clinic to another in case of emergency|
+
+|`* *` |user |manage the "rooms" in hospital |make space for new hospitalized patient
+
+|`*` |user with many patients in the address book |sort patients by name |locate a patient easily
 |=======================================================================
 
 _{More to be added}_
