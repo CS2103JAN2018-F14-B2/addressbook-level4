@@ -806,9 +806,9 @@ Priorities: High (must have) - `* * \*`, Medium (nice to have) - `* \*`, Low (un
 
 |`* * *` |user |add appointments |schedule meeting with owners
 
-|`* * *` |user |find owner¡¯s contact number |
+|`* * *` |user |find owner's contact number |
 
-|`* * *` |user |search for an animal¡¯s medical history |know next step of treatment
+|`* * *` |user |search for an animal's medical history |know next step of treatment
 
 |`* * *` |user |list out appointments for next day |know what to prepare
 
@@ -822,7 +822,7 @@ Priorities: High (must have) - `* * \*`, Medium (nice to have) - `* \*`, Low (un
 
 |`* * *` |user |list out patients of a specific species |contact then for blood donation
 
-|`* * *` |user |log in with passwords |protect my patients¡¯ information
+|`* * *` |user |log in with passwords |protect my patients' information
 
 |`* * *` |user |reschedule an appointment |make time for emergency situations
 
@@ -832,9 +832,9 @@ Priorities: High (must have) - `* * \*`, Medium (nice to have) - `* \*`, Low (un
 
 |`* * *` |user |add in owner details such as contact number |contact them when needed
 
-|`* * *` |user |update patients¡¯ information |
+|`* * *` |user |update patients' information |
 
-|`* * *` |user |see owner¡¯s name when checking patients¡¯ profile |know who it belongs to
+|`* * *` |user |see owner's name when checking patients' profile |know who it belongs to
 
 |`* *` |user |delete a patient after certain period |remove entries that I no longer need
 
@@ -850,7 +850,7 @@ Priorities: High (must have) - `* * \*`, Medium (nice to have) - `* \*`, Low (un
 
 |`* *` |user |transfer a patient from my clinic to another in case of emergency|
 
-|`* *` |user |manage the ¡°rooms¡± in hospital |make space for new hospitalized patient 
+|`* *` |user |manage the "rooms" in hospital |make space for new hospitalized patient
 
 |`*` |user with many patients in the address book |sort patients by name |locate a patient easily
 |=======================================================================
