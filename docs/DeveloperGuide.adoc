@@ -782,16 +782,13 @@ See this https://github.com/se-edu/addressbook-level4/pull/599[PR] for the step-
 
 *Target user profile*:
 
-* tech-savvy veterinarians and their <<assistants, assistants>>
-* can type relatively fast while maintaining accuracy
-* requires using the desktop in the workplace
-* requires <<cli, CLI>> applications for efficiency
-* provide veterinary services to domestic animals in Singapore
-* has to manage a significant number of <<pet_patients,pet patients>>
-* requires the information kept to generally be non-volatile
-* needs to search through amounts of data for information
+* has a need to manage a significant number of contacts
+* prefer desktop apps over other types
+* can type fast
+* prefers typing over mouse input
+* is reasonably comfortable using CLI apps
 
-*Value proposition*: all-in-one vet assistant app that can view and make appointments and search for information
+*Value proposition*: manage contacts faster than a typical mouse/GUI driven app
 
 [appendix]
 == User Stories
@@ -1093,15 +1090,8 @@ _{More to be added}_
 [[mainstream-os]] Mainstream OS::
 Windows, Linux, Unix, OS-X
 
-[[assistants]] Assistants::
-People who help Veterinarians (receptionist, technicians etc.)
-
-[[cli]] CLI::
-Command Line Interface
-
-[[pet_patients]] Pet Patients::
-Domestic animals which seek veterinary services
-
+[[private-contact-detail]] Private contact detail::
+A contact detail that is not meant to be shared with others
 
 [appendix]
 == Product Survey

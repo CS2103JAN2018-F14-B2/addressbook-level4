@@ -112,8 +112,22 @@ public class AddressBook implements ReadOnlyAddressBook {
         // This can cause the tags master list to have additional tags that are not tagged to any person
         // in the person list.
         persons.setPerson(target, syncedEditedPerson);
+        removeUselessTags();
     }
 
+    /**
+     * Removes all {@code tag}s not used by anyone in this {@code AddressBook}.
+     * Reused from https://github.com/se-edu/addressbook-level4/pull/790/files with minor modifications
+     */
+    private void removeUselessTags() {
+        Set<Tag> personTags =
+                persons.asObservableList()
+                        .stream()
+                        .map(Person::getTags)
+                        .flatMap(Set::stream)
+                        .collect(Collectors.toSet());
+        tags.setTags(personTags);
+    }
     /**
      *  Updates the master tag list to include tags in {@code person} that are not in the list.
      *  @return a copy of this {@code person} such that every tag in this person points to a Tag object in the master
@@ -151,6 +165,43 @@ public class AddressBook implements ReadOnlyAddressBook {
 
     public void addTag(Tag t) throws UniqueTagList.DuplicateTagException {
         tags.add(t);
+    }
+
+    /**
+     * Removes {@code tag} from {@code person} with that tag this {@code AddressBook}.
+     * @throws PersonNotFoundException if {@code person} is not found in this {@code AddressBook}.
+     * Reused from https://github.com/se-edu/addressbook-level4/pull/790/files with minor modifications
+     */
+    private void removeTagParticular(Tag tag, Person person) throws PersonNotFoundException {
+        Set<Tag> tagList = new HashSet<>(person.getTags()); //gets all the tags from a person
+
+        if (tagList.remove(tag)) {
+            Person updatedPerson =
+                    new Person(person.getName(), person.getPhone(), person.getEmail(), person.getAddress(), tagList);
+
+            try {
+                updatePerson(person, updatedPerson);
+            } catch (DuplicatePersonException dpe) {
+                throw new AssertionError("Modifying tag only should not result in duplicate person.");
+            }
+        }
+        else {
+            return;
+        }
+    }
+
+    /**
+     * Removes {@code tag} from all person with that tag this {@code AddressBook}.
+     * Reused from https://github.com/se-edu/addressbook-level4/pull/790/files with minor modifications
+     */
+    public void removeTag(Tag tag) {
+        try {
+            for (Person currPerson : persons) {
+                removeTagParticular(tag, currPerson);
+            }
+        } catch (PersonNotFoundException pnfe) {
+            throw new AssertionError("Impossible as obtained from address book.");
+        }
     }
 
     //// util methods
