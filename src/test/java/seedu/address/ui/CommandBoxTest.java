@@ -154,4 +154,119 @@ public class CommandBoxTest extends GuiUnitTest {
         guiRobot.push(keycode);
         assertEquals(expectedCommand, commandBoxHandle.getInput());
     }
+
+    //@@author aquarinte
+    @Test
+    public void commandBox_autocompleteCommandWord() {
+        //add command
+        commandBoxHandle.setText("a");
+        selectFromContextMenu();
+        assertEquals("add", commandBoxHandle.getInput());
+
+        commandBoxHandle.setText(" ");
+        selectFromContextMenu();
+        assertEquals(" add", commandBoxHandle.getInput());
+
+        //clear command
+        commandBoxHandle.setText("cl");
+        selectFromContextMenu();
+        assertEquals("clear", commandBoxHandle.getInput());
+
+        //delete command
+        commandBoxHandle.setText("d");
+        selectFromContextMenu();
+        assertEquals("delete", commandBoxHandle.getInput());
+
+        //edit command
+        commandBoxHandle.setText("ed");
+        selectFromContextMenu();
+        assertEquals("edit", commandBoxHandle.getInput());
+
+        //exit command
+        commandBoxHandle.setText("ex");
+        selectFromContextMenu();
+        assertEquals("exit", commandBoxHandle.getInput());
+
+        //help command
+        commandBoxHandle.setText("h");
+        selectFromContextMenu();
+        assertEquals("help", commandBoxHandle.getInput());
+
+        commandBoxHandle.setText("he");
+        selectFromContextMenu();
+        assertEquals("help", commandBoxHandle.getInput());
+
+        commandBoxHandle.setText("hel");
+        selectFromContextMenu();
+        assertEquals("help", commandBoxHandle.getInput());
+
+        //history command
+        commandBoxHandle.setText("h");
+        guiRobot.push(KeyCode.TAB);
+        selectFromContextMenu();
+        assertEquals("history", commandBoxHandle.getInput());
+
+        commandBoxHandle.setText("hi");
+        selectFromContextMenu();
+        assertEquals("history", commandBoxHandle.getInput());
+
+        commandBoxHandle.setText("hist");
+        selectFromContextMenu();
+        assertEquals("history", commandBoxHandle.getInput());
+
+        //list command
+        commandBoxHandle.setText("l");
+        selectFromContextMenu();
+        assertEquals("list", commandBoxHandle.getInput());
+
+        //theme command
+        commandBoxHandle.setText("t");
+        selectFromContextMenu();
+        assertEquals("theme", commandBoxHandle.getInput());
+
+        //undo
+        commandBoxHandle.setText("u");
+        selectFromContextMenu();
+        assertEquals("undo", commandBoxHandle.getInput());
+
+        //redo
+        commandBoxHandle.setText("r");
+        selectFromContextMenu();
+        assertEquals("redo", commandBoxHandle.getInput());
+    }
+
+    @Test
+    public void commandBox_autocompleteOption() {
+        //add command with -o
+        commandBoxHandle.setText("add");
+        commandBoxHandle.insertText(" -");
+        selectFromContextMenu();
+        assertEquals("add -o", commandBoxHandle.getInput());
+    }
+
+    @Test
+    public void commandBox_autocompletePrefix() {
+        //prefix n/
+        commandBoxHandle.setText("add");
+        commandBoxHandle.insertText(" n");
+        selectFromContextMenu();
+        assertEquals("add n/", commandBoxHandle.getInput());
+
+        //prefix nr/
+        commandBoxHandle.setText("add");
+        commandBoxHandle.insertText(" n");
+        guiRobot.push(KeyCode.TAB);
+        selectFromContextMenu();
+        assertEquals("add nr/", commandBoxHandle.getInput());
+
+        commandBoxHandle.setText("add");
+        commandBoxHandle.insertText(" nr");
+        selectFromContextMenu();
+        assertEquals("add nr/", commandBoxHandle.getInput());
+    }
+
+    private void selectFromContextMenu() {
+        guiRobot.push(KeyCode.TAB);
+        guiRobot.push(KeyCode.ENTER);
+    }
 }

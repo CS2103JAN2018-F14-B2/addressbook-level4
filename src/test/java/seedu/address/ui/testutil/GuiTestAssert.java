@@ -9,8 +9,11 @@ import java.util.stream.Collectors;
 
 import guitests.guihandles.PersonCardHandle;
 import guitests.guihandles.PersonListPanelHandle;
+import guitests.guihandles.PetPatientCardHandle;
+//import guitests.guihandles.PetPatientListPanelHandle;
 import guitests.guihandles.ResultDisplayHandle;
 import seedu.address.model.person.Person;
+import seedu.address.model.petpatient.PetPatient;
 import seedu.address.ui.PersonCard;
 
 /**
@@ -45,6 +48,20 @@ public class GuiTestAssert {
 
         assertTagsEqual(expectedPerson, actualCard);
     }
+
+    /**
+     * Asserts that {@code actualCard} displays the details of {@code expectedPetPatient}.
+     */
+    public static void assertCardDisplaysPetPatient(PetPatient expectedPetPatient, PetPatientCardHandle actualCard) {
+        assertEquals(expectedPetPatient.getName().toString(), actualCard.getName());
+        assertEquals(expectedPetPatient.getSpecies(), actualCard.getSpecies());
+        assertEquals(expectedPetPatient.getBreed(), actualCard.getBreed());
+        assertEquals(expectedPetPatient.getColour(), actualCard.getColour());
+        assertEquals(expectedPetPatient.getBloodType(), actualCard.getBloodType());
+        assertEquals(expectedPetPatient.getOwner().toString(), actualCard.getOwnerNric());
+
+    }
+
 
     /**
      * Returns the color style for {@code tagName}'s label. The tag's color is determined by looking up the color

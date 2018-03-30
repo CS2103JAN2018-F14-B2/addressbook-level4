@@ -11,22 +11,22 @@ import seedu.address.model.appointment.Appointment;
  */
 public class TypicalAppointments {
 
-    public static final Appointment ALLY = new AppointmentBuilder()
-            .withOwnerNric("S9012345A")
-            .withPetPatientName("Hammy")
+    public static final Appointment ALICE_APP = new AppointmentBuilder()
+            .withOwnerNric(TypicalPersons.ALICE.getNric().toString())
+            .withPetPatientName(TypicalPetPatients.JEWEL.getName().toString())
             .withRemark("Requires Home Visit")
             .withDateTime("2018-12-31 12:30")
             .withAppointmentTags("checkup").build();
-    public static final Appointment BENNY = new AppointmentBuilder()
-            .withOwnerNric("S1239049B")
-            .withPetPatientName("Lissy")
+    public static final Appointment BOB_APP = new AppointmentBuilder()
+            .withOwnerNric(TypicalPersons.BOB.getNric().toString())
+            .withPetPatientName(TypicalPetPatients.JOKER.getName().toString())
             .withRemark("May require isolation")
             .withDateTime("2018-12-31 14:30")
-            .withAppointmentTags("surgery").build();
+            .withAppointmentTags("vaccination").build();
 
     private TypicalAppointments() {} // prevents instantiation
 
     public static List<Appointment> getTypicalAppointments() {
-        return new ArrayList<>(Arrays.asList(ALLY, BENNY));
+        return new ArrayList<>(Arrays.asList(ALICE_APP, BOB_APP));
     }
 }

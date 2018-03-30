@@ -66,6 +66,20 @@ public class UniqueAppointmentList implements Iterable<Appointment> {
         internalList.set(index, editedAppointment);
     }
 
+    /**
+     * Removes the equivalent pet patient from the list.
+     *
+     * @throws AppointmentNotFoundException if no such pet patient could be found in the list.
+     */
+    public boolean remove(Appointment toRemove) throws AppointmentNotFoundException {
+        requireNonNull(toRemove);
+        final boolean appointmentFoundAndDeleted = internalList.remove(toRemove);
+        if (!appointmentFoundAndDeleted) {
+            throw new AppointmentNotFoundException();
+        }
+        return appointmentFoundAndDeleted;
+    }
+
     public void setAppointments(UniqueAppointmentList replacement) {
         this.internalList.setAll(replacement.internalList);
     }

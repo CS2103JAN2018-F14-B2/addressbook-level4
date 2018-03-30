@@ -422,12 +422,33 @@ Linking of pet patients to their respective owners and appointments will be impl
 
 // tag::commandsyntax[]
 
+=== Display List of PetPatients
+==== Current Implemaentation
+Since Veterinarians and their assistants have the need to view the PetPatients as a list and see how many PetPatients belong to the same Owner. It is necessary to implement the PetPatient List feature.
+
+==== Design Consideration
+* **Alternative 1:** Use tab function to switch between PetPatientList and PersonList
+
+** Pros: The UI will be neat to see, saves more space for calendar view
+** Cons: The user will not be able to see both PetPatient and Owners at the same time.
+
+* **ALternative 2:** Implement another Panel to display PetPatients.
+
+** Pros: User will be able to see both lists at the same time
+** Cons: Takes up more space, making it difficult to display appointments in the future.
+
+==== Current Limitations
+More command and features relating to PetPatient List are to be properly developed, the tags of PetPatients are not properly organised.
+
+==== Future Work
+Implement the corresponding Add, Delete, List commands for petPatients and decide on the tags to be used for petPatients.
+
 === Show Appointments on calendar
 ==== Current Implementation
 
-In the original AddressBook app, there's no appointment class to show. Since veterinarians and their assistants have the need to constantly check their schedule for upcoming appointments, a calender feature is required to show future appointments.
+Since veterinarians and their assistants have the need to constantly check their schedule for upcoming appointments, a calender feature is required to show future appointments.
 
-Third party API `CalendarF` is used as a Java calendar frame to show Appointments.
+Third party API `CalendarFX` is used as a Java calendar frame to show Appointments.
 
 ==== Design Consideration
 * **Alternative 1:** Use `iCalendar` from Jfxtra library
@@ -451,7 +472,7 @@ After the appointment class being finished, we'll be able to implement `setAppoi
 
 We may also make enhancements to the Medeina's UI such as changing theme colour to match the UI colour of CalendarFX.
 
-=== [Proposed] Command Syntax
+=== Improvements to Command Syntax
 ==== Current Implementation
 
 Command syntax can be long and complicated as there is a lot of information required from the user for each of the three classes: `Person.java`, `PetPatient.java` and `Appointment.java`.
@@ -482,10 +503,14 @@ Keeping to one main command is simpler and more user-friendly as compared to hav
 ===== Aspect: Improving user-friendliness
 
 * Command syntax highlighting
-** Use different colours to highlight [COMMAND WORDS], [PARSING OPTIONS] and [USER INPUT] --> improve readability for the user
+** Use different colours to highlight [COMMAND WORDS], [PARSING OPTIONS] and [USER INPUT] to improve readability for the user.
 
-* Command auto-complete
-** auto-complete of prefixes using the `tab` key to increase efficiency of using Medeina --> reduce typing and mistypes to improve efficiency in using the application.
+image::autocomplete.png[width="500"]
+
+* Command syntax auto-complete suggestions
+** auto-complete suggestions of command words, options and prefixes shown on a ContextMenu.
+** User can traverse through the suggestions in the ContextMenu using kbd:[Up] and kbd:[Down], or kbd:[Tab].
+** Press kbd:[Enter] to select the suggestion in the ContextMenu and the command box will be updated.
 
 // end::commandsyntax[]
 
@@ -1002,17 +1027,11 @@ Priorities: High (must have) - `* * \*`, Medium (nice to have) - `* \*`, Low (un
 
 |`* * *` |user |edit pet owner's contact information |update any change in contact information (e.g. changed hand phone number, change of address)
 
-|`* * *` |user |search for a pet patient's medical history |know the next step of treatment
-
-|`* * *` |user |create and modify tags |standardize tags used in the application
-
 |`* * *` |user |basic tags to be assigned automatically |type lesser (e.g. when adding a pet owner, the "Person" tag should be assigned by default)
 
 |`* * *` |user |list out appointments for next day |prepare for the required procedures/diagnosis/consultation
 
-|`* * *` |user |change the theme of the application |better suit my preference
-
-|`* * *` |user |classify types of appointment |better organize a long list of appointment
+|`* * *` |user |classify appointments by types |better organize a long list of appointments
 
 |`* * *` |user |cancel an appointment |make space in schedule for other things
 
@@ -1021,8 +1040,6 @@ Priorities: High (must have) - `* * \*`, Medium (nice to have) - `* \*`, Low (un
 |`* * *` |user |see a list of today's appointment |check on today's schedule
 
 |`* * *` |user |filter pet patients by species and blood type |contact them for blood donation during emergencies
-
-|`* * *` |user |log in with password |protect my pet patients' and their respective owners' information
 
 |`* * *` |user |reschedule an appointment |make time for emergency situations
 
@@ -1036,21 +1053,31 @@ Priorities: High (must have) - `* * \*`, Medium (nice to have) - `* \*`, Low (un
 
 |`* * *` |user |see pet owner's name when checking pet patients' profile |know who it belongs to
 
-|`* *` |user |delete a pet patient after certain period |remove entries that I no longer need
+|`* * *` |user |delete a pet patient after certain period |remove entries that I no longer need
+
+|`* * *` |user |have a simple and intuitive command line interface |maximize workflow efficiency
+
+|`* *` |user |change the theme of the application |better suit my preference
+
+|`* *` |user |log in with password |protect my pet patients' and their respective owners' information
 
 |`* *` |user |update status of pet patient (living, deceased) |know the number of pets I am managing now
 
 |`* *` |user |check who is my assistant for the day/particular pet patient |brief them in advance
 
-|`* *` |user |have reminders sms sent to pet owners automatically 2 days before appointment|
-
 |`* *` |user |check services consumed for a particular appointment |know what a pet patient has gone through
 
-|`* *` |user |update my status |be recognized as an official vet after my training
+|`*` |user |create and modify tags |standardize tags used in the application
 
-|`* *` |user |transfer a pet patient from my clinic to another in case of emergency|
+|`*` |user |have reminders sms sent to pet owners automatically 2 days before appointment|
 
-|`* *` |user |manage the "rooms" in hospital |make space for newly hospitalized pet patient
+|`*` |user |update my status |be recognized as an official vet after my training
+
+|`*` |user |transfer a pet patient from my clinic to another in case of emergency|
+
+|`*` |user |manage the "rooms" in hospital |make space for newly hospitalized pet patient
+
+|`*` |user |search for a pet patient's medical history |know the next step of treatment
 
 |`*` |user with many pet patients in the address book |sort pet patients by name |locate a pet patient easily
 |=======================================================================

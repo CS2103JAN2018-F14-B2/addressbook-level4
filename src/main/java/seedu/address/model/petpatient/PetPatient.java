@@ -12,6 +12,7 @@ import seedu.address.model.person.Nric;
 import seedu.address.model.tag.Tag;
 import seedu.address.model.tag.UniqueTagList;
 
+//@@author chialejing
 /**
  * Represents a PetPatient in the address book.
  * Guarantees: details are present, field values are validated.
@@ -29,7 +30,7 @@ public class PetPatient {
     private Nric ownerNric; // can be null (initially)
     private StringBuilder medicalHistory; // can be null (initially)
 
-    //keep this constructor
+    //keep this constructor, as owner NRIC can be null initially when adding a new PetPatient
     public PetPatient(PetPatientName name,
                       String species,
                       String breed,
@@ -152,21 +153,20 @@ public class PetPatient {
                 && otherPetPatient.getSpecies().equals(this.getSpecies())
                 && otherPetPatient.getBreed().equals(this.getBreed())
                 && otherPetPatient.getColour().equals(this.getColour())
-                && otherPetPatient.getBloodType().equals(this.getBloodType());
+                && otherPetPatient.getBloodType().equals(this.getBloodType())
+                && otherPetPatient.getOwner().equals(this.getOwner());
     }
 
     @Override
     public int hashCode() {
         // use this method for custom fields hashing instead of implementing your own
-        return Objects.hash(name, species, breed, colour, bloodType, tags);
+        return Objects.hash(name, species, breed, colour, bloodType, tags, ownerNric);
     }
 
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder();
         builder.append("\t")
-                // .append(" Owner's Name: ")
-                // .append(getOwner().getName())
                 .append(getName())
                 .append("\tSpecies: ")
                 .append(getSpecies())
@@ -176,6 +176,8 @@ public class PetPatient {
                 .append(getColour())
                 .append("\tBlood Type: ")
                 .append(getBloodType())
+                .append("\t\tOwner's NRIC: ")
+                .append(getOwner())
                 .append("\tTags: ");
         getTags().forEach(builder::append);
         return builder.toString();

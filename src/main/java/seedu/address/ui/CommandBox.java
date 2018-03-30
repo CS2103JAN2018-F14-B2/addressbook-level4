@@ -1,9 +1,13 @@
 package seedu.address.ui;
 
+import java.util.Set;
 import java.util.logging.Logger;
 
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.geometry.Side;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Region;
@@ -29,12 +33,20 @@ public class CommandBox extends UiPart<Region> {
 
     @FXML
     private TextField commandTextField;
+    private ContextMenu suggestionBox;
+    private Autocomplete autocompleteLogic = Autocomplete.getInstance();
+
+    private Set<String> suggestions;
 
     public CommandBox(Logic logic) {
         super(FXML);
         this.logic = logic;
+        suggestionBox = new ContextMenu();
+        commandTextField.setContextMenu(suggestionBox);
         // calls #setStyleToDefault() whenever there is a change to the text of the command box.
         commandTextField.textProperty().addListener((unused1, unused2, unused3) -> setStyleToDefault());
+        commandTextField.textProperty().addListener(((observable, oldValue, newValue) ->
+                triggerAutocomplete(newValue)));
         historySnapshot = logic.getHistorySnapshot();
     }
 
@@ -56,6 +68,9 @@ public class CommandBox extends UiPart<Region> {
             navigateToNextInput();
             break;
         default:
+            if (suggestionBox.isShowing()) {
+                suggestionBox.hide();
+            }
             // let JavaFx handle the keypress
         }
     }
@@ -148,4 +163,35 @@ public class CommandBox extends UiPart<Region> {
         styleClass.add(ERROR_STYLE_CLASS);
     }
 
+    /**
+     * Retrieve a list of autocomplete suggestions and set the pop-up ContextMenu.
+     */
+    private void triggerAutocomplete(String newValue) {
+        suggestionBox.getItems().clear();
+
+        if (!newValue.equals("")) {
+
+            suggestions = autocompleteLogic.getSuggestions(logic, commandTextField);
+
+            for (String s : suggestions) {
+                MenuItem m = new MenuItem(s);
+                m.setOnAction(event -> handleAutocompleteSelection(m.getText()));
+                suggestionBox.getItems().add(m);
+            }
+
+            suggestionBox.show(commandTextField, Side.BOTTOM, 0, 0);
+        }
+    }
+
+    /**
+     * Append autocomplete selection to commandTextField (do not append repeated characters).
+     * user input: 'a', selected autocomplete 'add' --> commandTextField will show 'add' and not 'aadd'.
+     */
+    private void handleAutocompleteSelection(String toAdd) {
+        String[] words = commandTextField.getText().trim().split(" ");
+        toAdd = toAdd.replaceFirst(words[words.length - 1], "");
+        int cursorPos = commandTextField.getCaretPosition();
+        commandTextField.insertText(cursorPos, toAdd);
+        commandTextField.positionCaret(commandTextField.getText().length());
+    }
 }

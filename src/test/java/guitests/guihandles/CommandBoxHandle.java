@@ -43,4 +43,23 @@ public class CommandBoxHandle extends NodeHandle<TextField> {
     public ObservableList<String> getStyleClass() {
         return getRootNode().getStyleClass();
     }
+
+    //@@author aquarinte
+    /**
+     * Type text into the command box and set caret at the end of text.
+     * Overwrite previous input.
+     */
+    public void setText(String input) {
+        guiRobot.interact(() -> getRootNode().setText(input));
+        guiRobot.interact(() -> getRootNode().positionCaret(getInput().length()));
+    }
+
+    /**
+     * Insert text into command box.
+     */
+    public void insertText(String input) {
+        int caretPos = getRootNode().getCaretPosition();
+        guiRobot.interact(() -> getRootNode().insertText(caretPos, input));
+        guiRobot.interact(() -> getRootNode().positionCaret(getInput().length()));
+    }
 }

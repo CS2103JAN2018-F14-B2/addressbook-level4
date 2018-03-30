@@ -39,6 +39,7 @@ public class MainWindow extends UiPart<Stage> {
     private CalendarWindow calendarWindow;
     //private BrowserPanel browserPanel;
     private PersonListPanel personListPanel;
+    private PetPatientListPanel petPatientListPanel;
     private Config config;
     private UserPrefs prefs;
 
@@ -53,6 +54,9 @@ public class MainWindow extends UiPart<Stage> {
 
     @FXML
     private StackPane personListPanelPlaceholder;
+
+    @FXML
+    private StackPane petPatientListPanelPlaceholder;
 
     @FXML
     private StackPane resultDisplayPlaceholder;
@@ -125,6 +129,9 @@ public class MainWindow extends UiPart<Stage> {
 
         personListPanel = new PersonListPanel(logic.getFilteredPersonList());
         personListPanelPlaceholder.getChildren().add(personListPanel.getRoot());
+
+        petPatientListPanel = new PetPatientListPanel(logic.getFilteredPetPatientList());
+        petPatientListPanelPlaceholder.getChildren().add(petPatientListPanel.getRoot());
 
         ResultDisplay resultDisplay = new ResultDisplay();
         resultDisplayPlaceholder.getChildren().add(resultDisplay.getRoot());

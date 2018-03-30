@@ -13,6 +13,8 @@ import seedu.address.commons.core.ComponentManager;
 import seedu.address.commons.core.LogsCenter;
 import seedu.address.commons.events.model.AddressBookChangedEvent;
 import seedu.address.model.appointment.Appointment;
+import seedu.address.model.appointment.exceptions.AppointmentDependencyNotEmptyException;
+import seedu.address.model.appointment.exceptions.AppointmentNotFoundException;
 import seedu.address.model.appointment.exceptions.DuplicateAppointmentException;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.exceptions.DuplicateNricException;
@@ -20,6 +22,8 @@ import seedu.address.model.person.exceptions.DuplicatePersonException;
 import seedu.address.model.person.exceptions.PersonNotFoundException;
 import seedu.address.model.petpatient.PetPatient;
 import seedu.address.model.petpatient.exceptions.DuplicatePetPatientException;
+import seedu.address.model.petpatient.exceptions.PetDependencyNotEmptyException;
+import seedu.address.model.petpatient.exceptions.PetPatientNotFoundException;
 import seedu.address.model.tag.Tag;
 
 /**
@@ -70,8 +74,16 @@ public class ModelManager extends ComponentManager implements Model {
     }
 
     @Override
-    public synchronized void deletePerson(Person target) throws PersonNotFoundException {
+    public synchronized void deletePerson(Person target)
+            throws PersonNotFoundException, PetDependencyNotEmptyException {
         addressBook.removePerson(target);
+        indicateAddressBookChanged();
+    }
+
+    @Override
+    public synchronized void deleteForcePerson(Person target)
+            throws PersonNotFoundException {
+        addressBook.removeForcePerson(target);
         indicateAddressBookChanged();
     }
 
@@ -79,6 +91,20 @@ public class ModelManager extends ComponentManager implements Model {
     public synchronized void addPerson(Person person) throws DuplicatePersonException, DuplicateNricException {
         addressBook.addPerson(person);
         updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
+        indicateAddressBookChanged();
+    }
+
+    @Override
+    public synchronized void deletePetPatient(PetPatient target)
+            throws PetPatientNotFoundException, AppointmentDependencyNotEmptyException {
+        addressBook.removePetPatient(target);
+        indicateAddressBookChanged();
+    }
+
+    @Override
+    public synchronized void deleteForcePetPatient(PetPatient target)
+            throws PetPatientNotFoundException {
+        addressBook.removeForcePetPatient(target);
         indicateAddressBookChanged();
     }
 
@@ -95,6 +121,12 @@ public class ModelManager extends ComponentManager implements Model {
         requireAllNonNull(target, editedPerson);
 
         addressBook.updatePerson(target, editedPerson);
+        indicateAddressBookChanged();
+    }
+
+    @Override
+    public synchronized void deleteAppointment(Appointment target) throws AppointmentNotFoundException {
+        addressBook.removeAppointment(target);
         indicateAddressBookChanged();
     }
 
@@ -142,6 +174,17 @@ public class ModelManager extends ComponentManager implements Model {
     public void updateFilteredAppointmentList(Predicate<Appointment> predicate) {
         requireNonNull(predicate);
         filteredAppointments.setPredicate(predicate);
+    }
+
+    //=========== Filtered Pet Patient List Accessors =============================================================
+
+    /**
+     * Returns an unmodifiable view of the list of {@code PetPatient} backed by the internal list of
+     * {@code addressBook}
+     */
+    @Override
+    public ObservableList<PetPatient> getFilteredPetPatientList() {
+        return FXCollections.unmodifiableObservableList(filteredPetPatients);
     }
 
     @Override

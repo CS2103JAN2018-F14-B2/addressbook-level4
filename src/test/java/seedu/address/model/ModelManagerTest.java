@@ -34,6 +34,20 @@ public class ModelManagerTest {
         modelManager.getFilteredPersonList().remove(0);
     }
 
+    @Test
+    public void getFilteredPetPatientList_modifyList_throwsUnsupportedOperationException() {
+        ModelManager modelManager = new ModelManager();
+        thrown.expect(UnsupportedOperationException.class);
+        modelManager.getFilteredPetPatientList().remove(0);
+    }
+
+    @Test
+    public void getFilteredAppointmentList_modifyList_throwsUnsupportedOperationException() {
+        ModelManager modelManager = new ModelManager();
+        thrown.expect(UnsupportedOperationException.class);
+        modelManager.getFilteredAppointmentList().remove(0);
+    }
+
     // Reused from https://github.com/se-edu/addressbook-level4/pull/790/files with minor modifications
     @Test
     public void deleteUnusedTag_modelUnchanged() throws Exception {

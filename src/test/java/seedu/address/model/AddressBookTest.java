@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_FRIEND;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_HUSBAND;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_UNUSED;
-import static seedu.address.testutil.TypicalAppointments.ALLY;
+import static seedu.address.testutil.TypicalAppointments.ALICE_APP;
 import static seedu.address.testutil.TypicalPersons.ALICE;
 import static seedu.address.testutil.TypicalPersons.AMY;
 import static seedu.address.testutil.TypicalPersons.BOB;
@@ -61,8 +61,8 @@ public class AddressBookTest {
         // Repeat ALICE twice
         List<Person> newPersons = Arrays.asList(ALICE, ALICE);
         List<Tag> newTags = new ArrayList<>(ALICE.getTags());
-        List<Appointment> newAppointments = Arrays.asList(ALLY);
-        List<Tag> newAppointmentTags = new ArrayList<>(ALLY.getAppointmentTags());
+        List<Appointment> newAppointments = Arrays.asList(ALICE_APP);
+        List<Tag> newAppointmentTags = new ArrayList<>(ALICE_APP.getAppointmentTags());
         AddressBookStub newData = new AddressBookStub(newPersons, newTags, newAppointments, newAppointmentTags);
 
         thrown.expect(AssertionError.class);

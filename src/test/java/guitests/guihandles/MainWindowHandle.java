@@ -13,6 +13,7 @@ public class MainWindowHandle extends StageHandle {
     private final StatusBarFooterHandle statusBarFooter;
     private final MainMenuHandle mainMenu;
     private final CalendarPanelHandle calendarPanel;
+    private final PetPatientListPanelHandle petPatientListPanel;
     //private final BrowserPanelHandle browserPanel;
 
 
@@ -25,6 +26,8 @@ public class MainWindowHandle extends StageHandle {
         statusBarFooter = new StatusBarFooterHandle(getChildNode(StatusBarFooterHandle.STATUS_BAR_PLACEHOLDER));
         mainMenu = new MainMenuHandle(getChildNode(MainMenuHandle.MENU_BAR_ID));
         calendarPanel = new CalendarPanelHandle(getChildNode(CalendarPanelHandle.CALENDARPANEL_ID));
+        petPatientListPanel = new PetPatientListPanelHandle(
+            getChildNode(PetPatientListPanelHandle.PETPATIENT_LIST_VIEW_ID));
         //browserPanel = new BrowserPanelHandle(getChildNode(BrowserPanelHandle.BROWSER_ID));
     }
 
@@ -50,6 +53,10 @@ public class MainWindowHandle extends StageHandle {
 
     public CalendarPanelHandle getCalendarPanel() {
         return calendarPanel;
+    }
+
+    public PetPatientListPanelHandle getPetPatientListPanel() {
+        return petPatientListPanel;
     }
 
     //public BrowserPanelHandle getBrowserPanel() {

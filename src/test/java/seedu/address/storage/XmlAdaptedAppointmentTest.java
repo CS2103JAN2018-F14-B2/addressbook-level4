@@ -2,7 +2,7 @@ package seedu.address.storage;
 
 import static org.junit.Assert.assertEquals;
 import static seedu.address.storage.XmlAdaptedAppointment.MISSING_FIELD_MESSAGE_FORMAT;
-import static seedu.address.testutil.TypicalAppointments.ALLY;
+import static seedu.address.testutil.TypicalAppointments.ALICE_APP;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -26,18 +26,18 @@ public class XmlAdaptedAppointmentTest {
     private static final String INVALID_DATETIME = "MAAAY 2018 8PM";
     private static final String INVALID_APPOINTMENT_TAG = "#checkup";
 
-    private static final String VALID_OWNER_NRIC = ALLY.getOwnerNric().toString();
-    private static final String VALID_PET_PATIENT_NAME = ALLY.getPetPatientName().toString();
-    private static final String VALID_REMARK = ALLY.getRemark().toString();
-    private static final String VALID_DATETIME = ALLY.getFormattedLocalDateTime();
-    private static final List<XmlAdaptedTag> VALID_APPOINTMENT_TAGS = ALLY.getAppointmentTags().stream()
+    private static final String VALID_OWNER_NRIC = ALICE_APP.getOwnerNric().toString();
+    private static final String VALID_PET_PATIENT_NAME = ALICE_APP.getPetPatientName().toString();
+    private static final String VALID_REMARK = ALICE_APP.getRemark().toString();
+    private static final String VALID_DATETIME = ALICE_APP.getFormattedLocalDateTime();
+    private static final List<XmlAdaptedTag> VALID_APPOINTMENT_TAGS = ALICE_APP.getAppointmentTags().stream()
             .map(XmlAdaptedTag::new)
             .collect(Collectors.toList());
 
     @Test
     public void toModelType_validAppointmentDetails_returnsAppointment() throws Exception {
-        XmlAdaptedAppointment appointment = new XmlAdaptedAppointment(ALLY);
-        assertEquals(ALLY, appointment.toModelType());
+        XmlAdaptedAppointment appointment = new XmlAdaptedAppointment(ALICE_APP);
+        assertEquals(ALICE_APP, appointment.toModelType());
     }
 
     @Test

@@ -59,7 +59,7 @@ e.g. typing *`help`* and pressing kbd:[Enter] will open the help window.
 * **`delete`**`3` : deletes the 3rd contact shown in the current list
 * *`exit`* : exits the app
 
-.  Refer to section 3: <<Features>> for details of each command.
+.  Refer to <<Features>> for details of each command.
 
 [[Features]]
 == Features
@@ -74,12 +74,22 @@ e.g. typing *`help`* and pressing kbd:[Enter] will open the help window.
 * Parameters can be in any order e.g. if the command specifies `n/NAME p/PHONE_NUMBER`, `p/PHONE_NUMBER n/NAME` is also acceptable.
 * Shorthand equivalent alias is available for all commands to simplify execution of commands.
 ====
+====
+*Command autocomplete in Medeina :* `[Since v1.3]`
+
+image::autocomplete.png[width="500"]
+
+* Medeina supports autocomplete for command words, options and prefixes.
+* You will also be shown a list of existing NRICs and a list of existing pet patients names when you need to reference them in `*-o* nr/OWNER_NRIC` and `*-p* n/PET_PATIENT_NAME` respectively.
+* You can use kbd:[Up] and kbd:[Down], or kbd:[Tab] to traverse through the autocomplete suggestions in the pop-up context menu.
+* Press kbd:[Enter] to select an autocomplete suggestion on the pop-up context menu.
+====
 
 === Viewing help : `help` or `h`
 
-If you are feeling lost, enter `help` or `h` in Medeina's command box, or press kbd:[F1] to bring up this user guide document in a pop-up window.
+If you are feeling lost, enter `help` or `h` in Medeina's command box, or press kbd:[Enter] to bring up this user guide document in a pop-up window.
 
-=== Adding a contact, pet patient or appointment : `add` or `a`
+=== Adding a contact, pet patient or appointment : `add` or `a` `[Since v1.2]`
 
 You can use the `add` or `a` to do the following :
 
@@ -160,32 +170,41 @@ Medeina will return `john` and `John Doe`
 * Type in `find Betsy Tim John` +
 Medeina will return any person having names `Betsy`, `Tim`, or `John`
 
-=== Deleting a contact, pet patient or appointment : `delete` or `d`
+=== Deleting a owner, pet patient or appointment : `delete` or `d` `[Since v1.3]`
 
 Use the following command format to:
 
-Delete an existing contact:: `delete **-o** INDEX`
+Delete an existing owner:: `delete **-o** INDEX`
+Forcefully deleting an existing owner:: `delete **-fo** INDEX`
 Delete an existing pet patient:: `delete **-p** INDEX`
+Forcefully deleting an existing pet patient:: `delete **-fp** INDEX`
 Delete an existing appointment:: `delete **-a** INDEX`
 
 ****
 * The command deletes the contact, pet patient or appointment at the specified `INDEX`.
+* The commands -o and -p will not run if there are dependencies that rely on it. To forcefully delete, use the -fo and -fp options.
+* Upon a forceful delete of an owner, all appointments and pet patients binded to the owner are automatically deleted as well.
+* Upon a forceful delete of a pet patient, all appointments binded to the pet patient are automatically deleted as well.
 * The index refers to the index number shown in the most recent listing, provided by the `list` command.
 ****
 
 [IMPORTANT]
 ====
-The index *must be a positive integer* `1, 2, 3, ...`
+The index *must be a positive integer* and should not be *invalid* `1, 2, 3, ...`
 ====
 
 Examples:
 
 * Type in `list -o` +
-`delete 2` +
-Medeina will deletes the 2nd contact in Medeina's address book.
+`delete -o 2` +
+Medeina will deletes the 2nd owner in Medeina's address book only if there are no pet patients and appointments binded to that owner.
+
+* Type in `list -o` +
+`delete -fo 2` +
+Medeina will deletes the 2nd owner in Medeina's address book, and all pet patients and appointments binded to that owner
 
 * Type in `find -o Betsy` +
-`d 1` +
+`d -o 1` +
 Medeina will delete the 1st contact in the results of the `find` command.
 
 === Selecting a contact : `select` or `s`
@@ -281,7 +300,8 @@ The command format should be: `clear` or `cls`
 ====
 This command **cannot** be undone. Please be certain that you have backed up your data (which is located in the `data` folder) before executing this command!
 ====
-=== Changing theme : `theme` or `t`
+
+=== Changing theme : `theme` or `t` `[Since v1.1]`
 
 To change Medeina's current theme to another pre-loaded theme. +
 The command format should be: `theme THEME_NAME` or `t THEME_NAME`

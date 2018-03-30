@@ -4,6 +4,8 @@ import java.util.function.Predicate;
 
 import javafx.collections.ObservableList;
 import seedu.address.model.appointment.Appointment;
+import seedu.address.model.appointment.exceptions.AppointmentDependencyNotEmptyException;
+import seedu.address.model.appointment.exceptions.AppointmentNotFoundException;
 import seedu.address.model.appointment.exceptions.DuplicateAppointmentException;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.exceptions.DuplicateNricException;
@@ -11,6 +13,8 @@ import seedu.address.model.person.exceptions.DuplicatePersonException;
 import seedu.address.model.person.exceptions.PersonNotFoundException;
 import seedu.address.model.petpatient.PetPatient;
 import seedu.address.model.petpatient.exceptions.DuplicatePetPatientException;
+import seedu.address.model.petpatient.exceptions.PetDependencyNotEmptyException;
+import seedu.address.model.petpatient.exceptions.PetPatientNotFoundException;
 import seedu.address.model.tag.Tag;
 
 /**
@@ -29,7 +33,11 @@ public interface Model {
     ReadOnlyAddressBook getAddressBook();
 
     /** Deletes the given person. */
-    void deletePerson(Person target) throws PersonNotFoundException;
+    void deletePerson(Person target) throws PersonNotFoundException, PetDependencyNotEmptyException;
+
+    /** Forcefully deletes the given person. */
+    void deleteForcePerson(Person target)
+            throws PersonNotFoundException, PetPatientNotFoundException, AppointmentNotFoundException;
 
     /** Adds the given person */
     void addPerson(Person person) throws DuplicatePersonException, DuplicateNricException;
@@ -50,6 +58,9 @@ public interface Model {
     /** Adds the given appointment */
     void addAppointment(Appointment appointment) throws DuplicateAppointmentException;
 
+    /** Deletes the given appointment. */
+    void deleteAppointment(Appointment target) throws AppointmentNotFoundException;
+
     /** Returns an unmodifiable view of the filtered person list */
     ObservableList<Person> getFilteredPersonList();
 
@@ -61,6 +72,10 @@ public interface Model {
 
     /** Returns an unmodifiable view of the filtered appointment list */
     ObservableList<Appointment> getFilteredAppointmentList();
+
+    /** Returns an unmodifiable view of the filtered appointment list */
+    ObservableList<PetPatient> getFilteredPetPatientList();
+
     /**
      * Updates the filter of the filtered appointment list to filter by the given {@code predicate}.
      * @throws NullPointerException if {@code predicate} is null.
@@ -71,4 +86,10 @@ public interface Model {
 
     void addPetPatient(PetPatient petPatient) throws DuplicatePetPatientException;
 
+    /** Deletes the given pet. */
+    void deletePetPatient(PetPatient target)
+            throws PetPatientNotFoundException, AppointmentDependencyNotEmptyException;
+
+    /** Forcefully deletes the given pet. */
+    void deleteForcePetPatient(PetPatient target) throws PetPatientNotFoundException, AppointmentNotFoundException;
 }

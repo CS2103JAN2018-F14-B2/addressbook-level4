@@ -82,6 +82,10 @@ public class TypicalPersons {
         return ab;
     }
 
+    public static List<Person> getTypicalPersonsForDelete() {
+        return new ArrayList<>(Arrays.asList(ALICE, BOB));
+    }
+
     public static List<Person> getTypicalPersons() {
         return new ArrayList<>(Arrays.asList(ALICE, BENSON, CARL, DANIEL, ELLE, FIONA, GEORGE));
     }
