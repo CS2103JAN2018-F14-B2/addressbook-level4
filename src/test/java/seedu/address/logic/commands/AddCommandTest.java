@@ -425,7 +425,7 @@ public class AddCommandTest {
         }
 
         @Override
-        public void addAppointment(Appointment appt) throws DuplicateAppointmentException {
+        public void addAppointment(Appointment appt) throws DuplicateAppointmentException, DuplicateDateTimeException {
             requireNonNull(appt);
             addressBook.addAppointment(appt);
             appointmentsAdded.add(appt);
