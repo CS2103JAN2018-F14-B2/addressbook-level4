@@ -87,19 +87,36 @@ image::autocomplete.png[width="500"]
 
 === Viewing help : `help` or `h`
 
-If you are feeling lost, enter `help` or `h` in Medeina's command box, or press kbd:[Enter] to bring up this user guide document in a pop-up window.
+If you are feeling lost, enter `help` or `h` in Medeina's command box, or press kbd:[F1] to bring up this user guide document in a pop-up window.
 
 === Adding a contact, pet patient or appointment : `add` or `a` `[Since v1.2]`
 
-You can use the `add` or `a` to do the following :
+You can use `add` or `a` to do the following :
 
-To add a new contact:: `add **-o** n/CONTACT_NAME p/PHONE_NUMBER e/EMAIL a/ADDRESS nr/NRIC [t/TAG]...`
+[cols="1,3,2a", options="header"]
+|=====
+| To add a:
+| Command syntax
+| Remarks
 
-To add a new pet patient under an existing contact (owner):: `add **-p** n/PET_PATIENT_NAME s/SPECIES b/BREED c/COLOR bt/BLOOD_TYPE [t/TAG]... **-o** nr/OWNER_NRIC`
+^.^| Contact
+| `add **-o** n/CONTACT_NAME p/PHONE_NUMBER e/EMAIL a/ADDRESS nr/NRIC [t/TAG]...`
+^.^| -
 
-To add a new appointment for an existing pet patient:: `add **-a** d/YYYY-MM-DD HH:MM r/REMARK [t/TAG]... **-o** nr/OWNER_NRIC **-p** n/PET_PATIENT_NAME`
+^.^| Pet patient
+| `add **-p** n/PET_PATIENT_NAME s/SPECIES b/BREED c/COLOR bt/BLOOD_TYPE [t/TAG]... **-o** nr/OWNER_NRIC`
+| * OWNER_NRIC must belong to an existing contact.
 
-To add a new appointment for a new pet patient under a new owner:: `add **-o** n/CONTACT_NAME p/PHONE_NUMBER e/EMAIL a/ADDRESS nr/NRIC [t/TAG]... **-p** n/PET_PATIENT_NAME s/SPECIES b/BREED c/COLOR bt/BLOOD_TYPE [t/TAG]... **-a** d/YYYY-MM-DD HH:MM r/REMARK [t/TAG]...`
+^.^| Appointment
+| `add **-a** d/YYYY-MM-DD HH:MM r/REMARK t/TAG... **-o** nr/OWNER_NRIC **-p** n/PET_PATIENT_NAME`
+| * OWNER_NRIC must belong to an existing contact.
+* PET_PATIENT_NAME must belong to an existing pet patient.
+* Compulsory tag (minimum 1).
+
+^.^| All of the above
+| `add **-o** n/CONTACT_NAME p/PHONE_NUMBER e/EMAIL a/ADDRESS nr/NRIC [t/TAG]... **-p** n/PET_PATIENT_NAME s/SPECIES b/BREED c/COLOR bt/BLOOD_TYPE [t/TAG]... **-a** d/YYYY-MM-DD HH:MM r/REMARK [t/TAG]...`
+^.^| -
+|=====
 
 [TIP]
 Contact, pet patient and appointment can have any number of tags (including 0)
