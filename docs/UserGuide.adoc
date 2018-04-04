@@ -93,30 +93,32 @@ If you are feeling lost, enter `help` or `h` in Medeina's command box, or press 
 
 You can use `add` or `a` to do the following :
 
-[width="59%", cols="20%,<30%,<27%a", options="header"]
+[width="100%", cols="15%,<45%a,<40%", options="header"]
 |=====
 | To add
 | Command syntax
 | Remarks
 
-^.^| Contact
+.^a|Person
 | `add **-o** n/CONTACT_NAME p/PHONE_NUMBER e/EMAIL a/ADDRESS nr/NRIC [t/TAG]...`
-^.^| [.commandCell]
--
+|
 
-^.^| Pet patient
+.^| Pet patient
 | `add **-p** n/PET_PATIENT_NAME s/SPECIES b/BREED c/COLOR bt/BLOOD_TYPE [t/TAG]... **-o** nr/OWNER_NRIC`
-| * OWNER_NRIC must belong to an existing contact.
+a| * OWNER_NRIC must belong to an existing contact.
 
-^.^| Appointment
-| `add **-a** d/YYYY-MM-DD HH:MM r/REMARK t/TAG... **-o** nr/OWNER_NRIC **-p** n/PET_PATIENT_NAME`
-| * OWNER_NRIC must belong to an existing contact.
+.^| Appointment
+| `add **-a** d/YYYY-MM-DD HH:MM r/REMARK t/TAG...` +
+`**-o** nr/OWNER_NRIC **-p** n/PET_PATIENT_NAME`
+a| * OWNER_NRIC must belong to an existing contact.
 * PET_PATIENT_NAME must belong to an existing pet patient.
 * Compulsory tag (minimum 1).
 
-^.^| All of the above
-| `add **-o** n/CONTACT_NAME p/PHONE_NUMBER e/EMAIL a/ADDRESS nr/NRIC [t/TAG]... **-p** n/PET_PATIENT_NAME s/SPECIES b/BREED c/COLOR bt/BLOOD_TYPE [t/TAG]... **-a** d/YYYY-MM-DD HH:MM r/REMARK [t/TAG]...`
-^.^| -
+.^| All of the above
+| `add **-o** n/CONTACT_NAME p/PHONE_NUMBER e/EMAIL a/ADDRESS nr/NRIC [t/TAG]...` +
+`**-p** n/PET_PATIENT_NAME s/SPECIES b/BREED c/COLOR bt/BLOOD_TYPE [t/TAG]...` +
+`**-a** d/YYYY-MM-DD HH:MM r/REMARK [t/TAG]...`
+|
 |=====
 
 [TIP]
