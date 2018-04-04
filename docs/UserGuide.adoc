@@ -93,9 +93,9 @@ If you are feeling lost, enter `help` or `h` in Medeina's command box, or press 
 
 You can use `add` or `a` to do the following :
 
-[width="59%", cols="20%,<30%,<25%a", options="header"]
+[width="59%", cols="20%a,<30%a,<27%a", options="header"]
 |=====
-| To add a:
+| To add
 | Command syntax
 | Remarks
 
