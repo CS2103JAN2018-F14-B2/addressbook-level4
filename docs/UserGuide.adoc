@@ -101,38 +101,38 @@ You can use `add` or `a` to do the following :
 
 .^a|Person
 | `add **-o** n/CONTACT_NAME p/PHONE_NUMBER e/EMAIL a/ADDRESS nr/NRIC [t/TAG]...`
-|
+a| * Tag is optional.
 
 .^| Pet patient
 | `add **-p** n/PET_PATIENT_NAME s/SPECIES b/BREED c/COLOR bt/BLOOD_TYPE [t/TAG]... **-o** nr/OWNER_NRIC`
 a| * OWNER_NRIC must belong to an existing contact.
+* Tag is optional.
 
 .^| Appointment
 | `add **-a** d/YYYY-MM-DD HH:MM r/REMARK t/TAG...` +
 `**-o** nr/OWNER_NRIC **-p** n/PET_PATIENT_NAME`
 a| * OWNER_NRIC must belong to an existing contact.
 * PET_PATIENT_NAME must belong to an existing pet patient.
+* Appointment time HH:MM must be in 30-minute blocks.
 * Compulsory tag (minimum 1).
 
 .^| All of the above
 | `add **-o** n/CONTACT_NAME p/PHONE_NUMBER e/EMAIL a/ADDRESS nr/NRIC [t/TAG]...` +
 `**-p** n/PET_PATIENT_NAME s/SPECIES b/BREED c/COLOR bt/BLOOD_TYPE [t/TAG]...` +
 `**-a** d/YYYY-MM-DD HH:MM r/REMARK [t/TAG]...`
-|
+a|
+
 |=====
-
-[TIP]
-Contact, pet patient and appointment can have any number of tags (including 0)
-
 [NOTE]
 Do not leave REMARK empty. You can specify '-' or 'nil' if there is no remark for the appointment.
 
-Examples:
-
+.Examples:
+****
 * `add **-o** n/Viktor Nikiforov p/91237890 e/v_nikiforov@gmail.com a/27 Skating Place nr/F0012345Z`
 * `add **-p** n/Makkachin s/dog b/poodle c/brown bt/O **-o** nr/F0012345Z`
 * `add **-a** d/2018-05-27 14:30 r/had poor appetite the last 3 days t/vaccination t/checkup **-o** nr/F0012345Z **-p** n/Makkachin`
 * `add **-o** n/Jacqueline p/65123456 e/jacq@gmail.com a/96 Computing Drive, #02-03 nr/S1234567G **-p** n/jewel s/cat b/persian c/calico bt/AB **-a** d/2018-12-31 12:30 r/nil t/surgery t/sterilization`
+****
 
 === Listing all contacts : `list` or `ls`
 
