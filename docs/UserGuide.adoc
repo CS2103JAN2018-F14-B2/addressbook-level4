@@ -93,7 +93,7 @@ If you are feeling lost, enter `help` or `h` in Medeina's command box, or press 
 
 You can use `add` or `a` to do the following :
 
-[width="59%", cols="20%a,<30%a,<27%a", options="header"]
+[width="59%", cols="20%,<30%,<27%a", options="header"]
 |=====
 | To add
 | Command syntax
@@ -101,7 +101,8 @@ You can use `add` or `a` to do the following :
 
 ^.^| Contact
 | `add **-o** n/CONTACT_NAME p/PHONE_NUMBER e/EMAIL a/ADDRESS nr/NRIC [t/TAG]...`
-^.^| -
+^.^| [.commandCell]
+-
 
 ^.^| Pet patient
 | `add **-p** n/PET_PATIENT_NAME s/SPECIES b/BREED c/COLOR bt/BLOOD_TYPE [t/TAG]... **-o** nr/OWNER_NRIC`
