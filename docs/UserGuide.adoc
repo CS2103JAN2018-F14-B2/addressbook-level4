@@ -4,8 +4,7 @@
 :toc-placement: preamble
 :sectnums:
 :imagesDir: images
-:stylesDir: stylesheets/
-:stylesheet: asciidoctor.css
+:stylesDir: stylesheets
 :xrefstyle: full
 :experimental:
 ifdef::env-github[]
@@ -55,10 +54,10 @@ image::Ui.png[width="790"]
 e.g. typing *`help`* and pressing kbd:[Enter] will open the help window.
 .  Some example commands you can try:
 
-* *`list`* : lists all contacts
-* **`add`**`n/John Doe p/98765432 e/johnd@example.com a/John street, block 123, #01-01 nr/S1234567G` : adds a contact named `John Doe` to Medeina's address book.
-* **`delete`**`3` : deletes the 3rd contact shown in the current list
-* *`exit`* : exits the app
+* *`list`* : lists all persons and pet patients
+* **`add -o`**`n/John Doe p/98765432 e/johnd@example.com a/John street, block 123, #01-01 nr/S1234567G` : adds a contact named `John Doe` to Medeina
+* **`delete -o`**`3` : deletes the 3rd person shown in the current list
+* *`exit`* : exits the application
 
 .  Refer to <<Features>> for details of each command.
 
@@ -122,13 +121,12 @@ a| * OWNER_NRIC must belong to an existing contact.
 `**-p** n/PET_PATIENT_NAME s/SPECIES b/BREED c/COLOR bt/BLOOD_TYPE [t/TAG]...` +
 `**-a** d/YYYY-MM-DD HH:MM r/REMARK [t/TAG]...`
 a|
-
 |=====
+
 [NOTE]
 Do not leave REMARK empty. You can specify '-' or 'nil' if there is no remark for the appointment.
 
-[EXAMPLE]
-test
+image::add_examples.png[width="600"]
 
 **Examples:**
 
