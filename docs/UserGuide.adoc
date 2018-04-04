@@ -4,7 +4,8 @@
 :toc-placement: preamble
 :sectnums:
 :imagesDir: images
-:stylesDir: stylesheets
+:stylesDir: stylesheets/
+:stylesheet: asciidoctor.css
 :xrefstyle: full
 :experimental:
 ifdef::env-github[]
