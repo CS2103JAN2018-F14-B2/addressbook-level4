@@ -54,10 +54,10 @@ image::Ui.png[width="790"]
 e.g. typing *`help`* and pressing kbd:[Enter] will open the help window.
 .  Some example commands you can try:
 
-* *`list`* : lists all contacts
-* **`add`**`n/John Doe p/98765432 e/johnd@example.com a/John street, block 123, #01-01 nr/S1234567G` : adds a contact named `John Doe` to Medeina's address book.
-* **`delete`**`3` : deletes the 3rd contact shown in the current list
-* *`exit`* : exits the app
+* *`list`* : lists all persons and pet patients
+* **`add -o`**`n/John Doe p/98765432 e/johnd@example.com a/John street, block 123, #01-01 nr/S1234567G` : adds a contact named `John Doe` to Medeina
+* **`delete -o`**`3` : deletes the 3rd person shown in the current list
+* *`exit`* : exits the application
 
 .  Refer to <<Features>> for details of each command.
 
@@ -87,32 +87,54 @@ image::autocomplete.png[width="500"]
 
 === Viewing help : `help` or `h`
 
-If you are feeling lost, enter `help` or `h` in Medeina's command box, or press kbd:[Enter] to bring up this user guide document in a pop-up window.
+If you are feeling lost, enter `help` or `h` in Medeina's command box, or press kbd:[F1] to bring up this user guide document in a pop-up window.
 
 === Adding a contact, pet patient or appointment : `add` or `a` `[Since v1.2]`
 
-You can use the `add` or `a` to do the following :
+You can use `add` or `a` to do the following :
 
-To add a new contact:: `add **-o** n/CONTACT_NAME p/PHONE_NUMBER e/EMAIL a/ADDRESS nr/NRIC [t/TAG]...`
+[width="100%", cols="15%,<45%a,<40%", options="header"]
+|=====
+| To add
+| Command syntax
+| Remarks
 
-To add a new pet patient under an existing contact (owner):: `add **-p** n/PET_PATIENT_NAME s/SPECIES b/BREED c/COLOR bt/BLOOD_TYPE [t/TAG]... **-o** nr/OWNER_NRIC`
+.^a|Person
+| `add **-o** n/CONTACT_NAME p/PHONE_NUMBER e/EMAIL a/ADDRESS nr/NRIC [t/TAG]...`
+a| * Tag is optional.
 
-To add a new appointment for an existing pet patient:: `add **-a** d/YYYY-MM-DD HH:MM r/REMARK [t/TAG]... **-o** nr/OWNER_NRIC **-p** n/PET_PATIENT_NAME`
+.^| Pet patient
+| `add **-p** n/PET_PATIENT_NAME s/SPECIES b/BREED c/COLOR bt/BLOOD_TYPE [t/TAG]... **-o** nr/OWNER_NRIC`
+a| * OWNER_NRIC must belong to an existing contact.
+* Tag is optional.
 
-To add a new appointment for a new pet patient under a new owner:: `add **-o** n/CONTACT_NAME p/PHONE_NUMBER e/EMAIL a/ADDRESS nr/NRIC [t/TAG]... **-p** n/PET_PATIENT_NAME s/SPECIES b/BREED c/COLOR bt/BLOOD_TYPE [t/TAG]... **-a** d/YYYY-MM-DD HH:MM r/REMARK [t/TAG]...`
+.^| Appointment
+| `add **-a** d/YYYY-MM-DD HH:MM r/REMARK t/TAG...` +
+**-o** [.blue]#nr/OWNER_NRIC **-p** n/PET_PATIENT_NAME#
+a| * OWNER_NRIC must belong to an existing contact.
+* PET_PATIENT_NAME must belong to an existing pet patient.
+* Appointment time HH:MM must be in 30-minute blocks.
+* Compulsory tag (minimum 1).
 
-[TIP]
-Contact, pet patient and appointment can have any number of tags (including 0)
+.^| All of the above
+| `add **-o** n/CONTACT_NAME p/PHONE_NUMBER e/EMAIL a/ADDRESS nr/NRIC [t/TAG]...` +
+`**-p** n/PET_PATIENT_NAME s/SPECIES b/BREED c/COLOR bt/BLOOD_TYPE [t/TAG]...` +
+`**-a** d/YYYY-MM-DD HH:MM r/REMARK [t/TAG]...`
+a|
+|=====
 
 [NOTE]
 Do not leave REMARK empty. You can specify '-' or 'nil' if there is no remark for the appointment.
 
-Examples:
+image::add_examples.png[width="600"]
+
+**Examples:**
 
 * `add **-o** n/Viktor Nikiforov p/91237890 e/v_nikiforov@gmail.com a/27 Skating Place nr/F0012345Z`
 * `add **-p** n/Makkachin s/dog b/poodle c/brown bt/O **-o** nr/F0012345Z`
 * `add **-a** d/2018-05-27 14:30 r/had poor appetite the last 3 days t/vaccination t/checkup **-o** nr/F0012345Z **-p** n/Makkachin`
 * `add **-o** n/Jacqueline p/65123456 e/jacq@gmail.com a/96 Computing Drive, #02-03 nr/S1234567G **-p** n/jewel s/cat b/persian c/calico bt/AB **-a** d/2018-12-31 12:30 r/nil t/surgery t/sterilization`
+
 
 === Listing all contacts : `list` or `ls`
 
