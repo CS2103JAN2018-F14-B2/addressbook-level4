@@ -93,11 +93,11 @@ If you are feeling lost, enter `help` or `h` in Medeina's command box, or press 
 
 You can use `add` or `a` to do the following :
 
-[cols="1,2,2a"]
+[width="59%", cols="20%,<30%,<25%a", options="header"]
 |=====
-^.^| **To add a:**
-^.^| **Command syntax**
-^.^| **Remarks**
+| To add a:
+| Command syntax
+| Remarks
 
 ^.^| Contact
 | `add **-o** n/CONTACT_NAME p/PHONE_NUMBER e/EMAIL a/ADDRESS nr/NRIC [t/TAG]...`
