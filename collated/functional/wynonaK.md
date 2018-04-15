@@ -88,44 +88,44 @@ public class DeleteCommand extends UndoableCommand {
 
     public static final String MESSAGE_USAGE = COMMAND_WORD
             + " -[f]o/-[f]p/-a"
-            + ": Deletes the person/pet/appointment identified by the index number used in the last listing.\n"
-            + "Additional -[f] options indicates forcefully deleting object and all related dependencies.\n"
+            + ": Deletes the contact/pet/appointment identified by the index number used in the latest listing.\n"
+            + "Additional -[f] options indicates forcefully deleting object all of its related dependencies.\n"
             + "Parameters: INDEX (must be a positive integer, must not be invalid)\n"
             + "Example: " + COMMAND_WORD + " -o 1";
 
     public static final String MESSAGE_USAGE_OWNER = COMMAND_WORD
             + " -o"
-            + ": Deletes the person identified by the index number used in the last person listing.\n"
+            + ": Deletes the contact identified by the index number used in the latest contact listing.\n"
             + "Parameters: INDEX (must be a positive integer, must not be invalid)\n"
             + "Example: " + COMMAND_WORD + " -o 1";
 
     public static final String MESSAGE_USAGE_PET_PATIENT = COMMAND_WORD
             + " -p"
-            + ": Deletes the pet patient identified by the index number used in the last pet patient listing.\n"
+            + ": Deletes the pet patient identified by the index number used in the latest pet patient listing.\n"
             + "Parameters: INDEX (must be a positive integer, must not be invalid)\n"
             + "Example: " + COMMAND_WORD + " -p 1";
 
     public static final String MESSAGE_USAGE_APPOINTMENT = COMMAND_WORD
             + " -a"
-            + ": Deletes the appointment identified by the index number used in the last appointment listing.\n"
+            + ": Deletes the appointment identified by the index number used in the latest appointment listing.\n"
             + "Parameters: INDEX (must be a positive integer, must not be invalid)\n"
             + "Example: " + COMMAND_WORD + " -a 1";
 
     public static final String MESSAGE_USAGE_FORCE_OWNER = COMMAND_WORD
             + " -fo"
-            + ": Forcefully deletes the person and all related dependencies "
-            + "identified by the index number used in the last person listing.\n"
+            + ": Forcefully deletes a contact and all related dependencies "
+            + "identified by the index number used in the latest contact listing.\n"
             + "Parameters: INDEX (must be a positive integer)\n"
             + "Example: " + COMMAND_WORD + " -fo 1";
 
     public static final String MESSAGE_USAGE_FORCE_PET_PATIENT = COMMAND_WORD
             + " -fp"
-            + ": Forcefully deletes the pet and all related dependencies "
-            + "identified by the index number used in the last person listing.\n"
+            + ": Forcefully deletes a pet patient and all related dependencies "
+            + "identified by the index number used in the latest pet patient listing.\n"
             + "Parameters: INDEX (must be a positive integer, must not be invalid)\n"
             + "Example: " + COMMAND_WORD + " -fp 1";
 
-    public static final String MESSAGE_DELETE_PERSON_SUCCESS = "Deleted Person: %1$s";
+    public static final String MESSAGE_DELETE_PERSON_SUCCESS = "Deleted Contact: %1$s";
     public static final String MESSAGE_DELETE_PET_PATIENT_SUCCESS = "Deleted Pet Patient: %1$s";
     public static final String MESSAGE_DELETE_APPOINTMENT_SUCCESS = "Deleted Appointment: %1$s";
 
@@ -169,7 +169,7 @@ public class DeleteCommand extends UndoableCommand {
             requireNonNull(personToDelete);
             model.deletePerson(personToDelete);
         } catch (PersonNotFoundException pnfe) {
-            throw new AssertionError("The target person cannot be missing");
+            throw new AssertionError("The target contact cannot be missing");
         }
 
         return new CommandResult(String.format(MESSAGE_DELETE_PERSON_SUCCESS, personToDelete));
@@ -193,7 +193,7 @@ public class DeleteCommand extends UndoableCommand {
             requireNonNull(petPatientToDelete);
             model.deletePetPatient(petPatientToDelete);
         } catch (PetPatientNotFoundException ppnfe) {
-            throw new AssertionError("The target pet cannot be missing");
+            throw new AssertionError("The target pet patient cannot be missing");
         }
 
         return new CommandResult(String.format(MESSAGE_DELETE_PET_PATIENT_SUCCESS, petPatientToDelete));
@@ -252,7 +252,7 @@ public class DeleteCommand extends UndoableCommand {
             }
             model.deletePerson(personToDelete);
         } catch (PersonNotFoundException e) {
-            throw new AssertionError("The target person cannot be missing");
+            throw new AssertionError("The target contact cannot be missing");
         } catch (PetDependencyNotEmptyException e) {
             throw new AssertionError("Pet dependencies still exist!");
         }
@@ -276,7 +276,7 @@ public class DeleteCommand extends UndoableCommand {
             }
             model.deletePetPatient(petPatientToDelete);
         } catch (PetPatientNotFoundException ppnfe) {
-            throw new AssertionError("The target pet cannot be missing");
+            throw new AssertionError("The target pet patient cannot be missing");
         }  catch (AppointmentDependencyNotEmptyException e) {
             throw new AssertionError("Appointment dependencies still exist!");
         }
@@ -331,10 +331,10 @@ public class FindCommand extends Command {
             + " the specified option, prefixes & keywords (case-sensitive)"
             + " and displays them as a list with index numbers.\n"
             + "Parameters: OPTION PREFIX/KEYWORD [MORE_PREFIX/MORE_KEYWORDS]...\n"
-            + "Accepted Options: -o (OWNER-RELATED), -p (PET-PATIENT-RELATED)\n"
-            + "Accepted Prefixes for Owner: n/NAME, nr/NRIC, t/TAG\n"
+            + "Accepted Options: -o (CONTACT-RELATED), -p (PET-PATIENT-RELATED)\n"
+            + "Accepted Prefixes for Contacts: n/NAME, nr/NRIC, t/TAG\n"
             + "Accepted Prefixes for Pet Patient: n/NAME, s/SPECIES, b/BREED, c/COLOUR, bt/BLOODTYPE, t/TAG\n"
-            + "Example: " + COMMAND_WORD + "-o n/alice bob charlie";
+            + "Example: " + COMMAND_WORD + " -o n/alice bob charlie";
 
     private HashMap<String, String[]> hashMap;
     private int type = 0;
@@ -1471,10 +1471,6 @@ public class UniqueAppointmentList implements Iterable<Appointment> {
             throw new DuplicateAppointmentException();
         }
 
-        if (toAdd.getDateTime().isBefore(LocalDateTime.now())) {
-            throw new PastAppointmentException();
-        }
-
         ArrayList<LocalDateTime> timeList = new ArrayList<>();
 
         for (Appointment a : internalList) {
@@ -1486,6 +1482,9 @@ public class UniqueAppointmentList implements Iterable<Appointment> {
 
         for (LocalDateTime dateTime : timeList) {
             if (toAdd.getDateTime().isAfter(dateTime) && toAdd.getDateTime().isBefore(dateTime.plusMinutes(30))) {
+                throw new ConcurrentAppointmentException();
+            }
+            if (toAdd.getDateTime().isBefore(dateTime) && toAdd.getDateTime().plusMinutes(30).isAfter(dateTime)) {
                 throw new ConcurrentAppointmentException();
             }
         }
@@ -1652,32 +1651,176 @@ public class PetDependencyNotEmptyException extends Exception {
 ```
 ###### \java\seedu\address\model\util\SampleDataUtil.java
 ``` java
+/**
+ * Contains utility methods for populating {@code AddressBook} with sample data.
+ */
+public class SampleDataUtil {
+    public static Person[] getSamplePersons() {
+        return new Person[] {
+            new Person(new Name("Alex Yeoh"), new Phone("87438807"), new Email("alexyeoh@example.com"),
+                new Address("Blk 30 Geylang Street 29, #06-40"), new Nric("S0123456B"),
+                getTagSet("owner")),
+            new Person(new Name("Bernice Yu"), new Phone("99272758"), new Email("berniceyu@example.com"),
+                new Address("Blk 30 Lorong 3 Serangoon Gardens, #07-18"), new Nric("T0123456C"),
+                getTagSet("owner")),
+            new Person(new Name("Charlotte Oliveiro"), new Phone("93210283"), new Email("charlotte@example.com"),
+                new Address("Blk 11 Ang Mo Kio Street 74, #11-04"), new Nric("G0123456A"),
+                getTagSet("owner")),
+            new Person(new Name("David Li"), new Phone("91031282"), new Email("lidavid@example.com"),
+                new Address("Blk 436 Serangoon Gardens Street 26, #16-43"), new Nric("F0123456B"),
+                getTagSet("owner")),
+            new Person(new Name("Irfan Ibrahim"), new Phone("92492021"), new Email("irfan@example.com"),
+                new Address("Blk 47 Tampines Street 20, #17-35"), new Nric("S0163456E"),
+                getTagSet("owner")),
+            new Person(new Name("Roy Balakrishnan"), new Phone("92624417"), new Email("royb@example.com"),
+                new Address("Blk 45 Aljunied Street 85, #11-31"), new Nric("F0123056T"),
+                getTagSet("owner")),
+            new Person(new Name("Alexia Tan"), new Phone("67321372"), new Email("alexia@example.com"),
+                new Address("260 Orchard Road, The Heeren ,04-30/31 238855, Singapore"), new Nric("S1199380Z"),
+                getTagSet("owner")),
+            new Person(new Name("Bernard Yeong"), new Phone("65457582"), new Email("bernardyeong@example.com"),
+                new Address("Blk 30 Lorong 3 Serangoon Gardens, #07-18"), new Nric("S8267808E"),
+                getTagSet("owner")),
+            new Person(new Name("John Cena"), new Phone("93282203"), new Email("johncena@example.com"),
+                new Address("5 Airport Cargo Road #452A Core H 4th Storey, 819462, Singapore"), new Nric("S6654649G"),
+                getTagSet("owner")),
+            new Person(new Name("Rick Sanchez"), new Phone("62653105"), new Email("ricksanchez@example.com"),
+                new Address("15 Kian Teck Road 628770, Singapore"), new Nric("S5985945E"),
+                getTagSet("owner")),
+            new Person(new Name("Lee Tze Ting"), new Phone("63392060"), new Email("tzeting@example.com"),
+                new Address("73 Bras Basah, 07-01 470765, Singapore"), new Nric("S1209036F"),
+                getTagSet("volunteer")),
+            new Person(new Name("Lee Yan Hwa"), new Phone("68845060"), new Email("yanhwa@example.com"),
+                new Address("69 Mohamed Sultan Raod, 239015, Singapore"), new Nric("S3643153I"),
+                getTagSet("volunteer")),
+            new Person(new Name("Yuuri Katsuki"), new Phone("63353388"), new Email("yuuriviktor@example.com"),
+                new Address("180 Clemenceau Avenue #06-01 Haw Par Centre, 239922, Singapore"), new Nric("S4176809F"),
+                getTagSet("supplier")),
+            new Person(new Name("Lu Li Ming"), new Phone("62255154"), new Email("liming@example.com"),
+                new Address("69 Choa Chu Kang Loop #02-12, 689672, Singapore"), new Nric("S2557566J"),
+                getTagSet("owner", "spca")),
+            new Person(new Name("Eileen Yeo"), new Phone("67797976"), new Email("eileen@example.com"),
+                new Address("Block 51 Ayer Rajah Crescent 02-15/16 Singapore 139948, Singapore"), new Nric("S9408343E"),
+                getTagSet("volunteer", "owner")),
+            new Person(new Name("Liew Chin Chuan"), new Phone("63921480"), new Email("chinchuan@example.com"),
+                new Address("71 Sultan Gate, 198496, Singapore"), new Nric("S2330718I"),
+                getTagSet("owner", "volunteer")),
+            new Person(new Name("Samson Yeow"), new Phone("63488686"), new Email("samson@example.com"),
+                new Address("86 East Coast Road, 428788, Singapore"), new Nric("S7165937B"),
+                getTagSet("owner", "spca")),
+            new Person(new Name("Codee Ong"), new Phone("63488686"), new Email("codeeo@example.com"),
+                new Address("35 Changi North Crescent, 499641, Singapore"), new Nric("S1317219F"),
+                getTagSet("owner")),
+            new Person(new Name("Fuji Syuusuke"), new Phone("90245123"), new Email("fujis@example.com"),
+                new Address("Blk 106 Bukit Purmei Street 10, #20-20"), new Nric("S9015638A"),
+                getTagSet("supplier", "owner")),
+            new Person(new Name("Tezuka Kunimitsu"), new Phone("92247377"), new Email("teuzkak@example.com"),
+                new Address("Blk 106 Bukit Purmei Street 10, #20-20"), new Nric("S2012044D"),
+                getTagSet("supplier", "owner"))
+        };
+    }
+
     public static PetPatient[] getSamplePetPatients() {
         return new PetPatient[] {
             new PetPatient(new PetPatientName("Ane"), new Species("Cat"), new Breed("Siamese"),
-                new Colour("Brown"), new BloodType("A"), new Nric("S0123456B"),
-                getTagSet("Hostile")),
+                new Colour("brown"), new BloodType("A"), new Nric("S0123456B"),
+                getTagSet("hostile")),
             new PetPatient(new PetPatientName("Bei"), new Species("Cat"), new Breed("British Shorthair"),
-                new Colour("Grey"), new BloodType("B"), new Nric("T0123456C"),
-                getTagSet("Overfriendly")),
+                new Colour("grey"), new BloodType("B"), new Nric("T0123456C"),
+                getTagSet("depression")),
             new PetPatient(new PetPatientName("Nei"), new Species("Cat"), new Breed("Maine Coon"),
-                new Colour("Black"), new BloodType("AB"), new Nric("T0123456C"),
-                getTagSet("Aggressive")),
+                new Colour("black"), new BloodType("AB"), new Nric("T0123456C"),
+                getTagSet("aggressive")),
             new PetPatient(new PetPatientName("Chae"), new Species("Cat"), new Breed("Russian Blue"),
-                new Colour("Grey"), new BloodType("A"), new Nric("G0123456A"),
-                getTagSet("Naive")),
+                new Colour("grey"), new BloodType("A"), new Nric("G0123456A"),
+                getTagSet("fiv")),
             new PetPatient(new PetPatientName("Don"), new Species("Dog"), new Breed("German Shepherd"),
-                new Colour("Brown"), new BloodType("DEA 4"), new Nric("F0123456B"),
-                getTagSet("Aggressive")),
+                new Colour("brown"), new BloodType("DEA 4+"), new Nric("F0123456B"),
+                getTagSet("aggressive")),
             new PetPatient(new PetPatientName("Este"), new Species("Dog"), new Breed("Golden Retriever"),
-                new Colour("Golden"), new BloodType("DEA 6"), new Nric("S0163456E"),
-                getTagSet("Overfriendly")),
+                new Colour("golden"), new BloodType("DEA 6+"), new Nric("S0163456E"),
+                getTagSet("microchipped")),
             new PetPatient(new PetPatientName("Famm"), new Species("Dog"), new Breed("Pug"),
-                new Colour("Golden"), new BloodType("DEA 1.1-"), new Nric("F0123056T"),
+                new Colour("golden"), new BloodType("DEA 1.1-"), new Nric("F0123056T"),
                 getTagSet("3legged")),
             new PetPatient(new PetPatientName("Plan"), new Species("Dog"), new Breed("Siberian Husky"),
-                new Colour("White"), new BloodType("DEA 1.1+"), new Nric("F0123056T"),
-                getTagSet("Hostile")),
+                new Colour("white"), new BloodType("DEA 1.1+"), new Nric("F0123056T"),
+                getTagSet("hostile", "newborn")),
+            new PetPatient(new PetPatientName("Blu"), new Species("Cat"), new Breed("Burmese"),
+                new Colour("brown"), new BloodType("A"), new Nric("S1199380Z"),
+                getTagSet("hostile", "fiv")),
+            new PetPatient(new PetPatientName("Red"), new Species("Cat"), new Breed("Cornish Rex"),
+                new Colour("white"), new BloodType("B"), new Nric("S8267808E"),
+                getTagSet("fiv")),
+            new PetPatient(new PetPatientName("Fluffy"), new Species("Cat"), new Breed("Birman"),
+                new Colour("white"), new BloodType("AB"), new Nric("S6654649G"),
+                getTagSet("aggressive")),
+            new PetPatient(new PetPatientName("Scooby"), new Species("Cat"), new Breed("Ocicat"),
+                new Colour("white"), new BloodType("A"), new Nric("S5985945E"),
+                getTagSet("hostile", "newborn")),
+            new PetPatient(new PetPatientName("Snowball"), new Species("Dog"), new Breed("Rottweiler"),
+                new Colour("brown and black"), new BloodType("DEA 4+"), new Nric("S2557566J"),
+                getTagSet("aggressive", "microchipped")),
+            new PetPatient(new PetPatientName("Wabbit"), new Species("Dog"), new Breed("Beagle"),
+                new Colour("brown and white"), new BloodType("DEA 6+"), new Nric("S2557566J"),
+                getTagSet("microchipped")),
+            new PetPatient(new PetPatientName("Oreo"), new Species("Dog"), new Breed("Dalmation"),
+                new Colour("black and white"), new BloodType("DEA 1.1+"), new Nric("S9408343E"),
+                getTagSet("3legged")),
+            new PetPatient(new PetPatientName("Milkshake"), new Species("Bird"), new Breed("Black Throated Sparrow"),
+                new Colour("black and white"), new BloodType("NIL"), new Nric("S2330718I"),
+                getTagSet("newborn", "missing")),
+            new PetPatient(new PetPatientName("Ginger"), new Species("Bird"), new Breed("Amazon Parrot"),
+                new Colour("green"), new BloodType("NIL"), new Nric("S2330718I"),
+                getTagSet("hostile")),
+            new PetPatient(new PetPatientName("Juniper"), new Species("Chinchilla"), new Breed("Lanigera Chinchilla"),
+                new Colour("grey"), new BloodType("NIL"), new Nric("S2330718I"),
+                getTagSet("newborn")),
+            new PetPatient(new PetPatientName("Baron"), new Species("Chinchilla"), new Breed("Brevicaudata Chinchilla"),
+                new Colour("black"), new BloodType("NIL"), new Nric("S7165937B"),
+                getTagSet("microchipped", "allergy")),
+            new PetPatient(new PetPatientName("Sting"), new Species("Guinea Pig"), new Breed("Abyssinian Guinea Pig"),
+                new Colour("white"), new BloodType("B RH-"), new Nric("S7165937B"),
+                getTagSet("newborn", "hostile")),
+            new PetPatient(new PetPatientName("Riddle"), new Species("Guinea Pig"), new Breed("Skinny Pig"),
+                new Colour("black and white"), new BloodType("A RH+"), new Nric("S7165937B"),
+                getTagSet("aggressive", "allergy")),
+            new PetPatient(new PetPatientName("Tiki"), new Species("Guinea Pig"), new Breed("Teddy Guinea Pig"),
+                new Colour("golden"), new BloodType("AB RH+"), new Nric("S0163456E"),
+                getTagSet("drooling", "newborn")),
+            new PetPatient(new PetPatientName("Hero"), new Species("Dog"), new Breed("German Shepherd"),
+                new Colour("black"), new BloodType("DEA 1.1+"), new Nric("S2012044D"),
+                getTagSet("newborn")),
+            new PetPatient(new PetPatientName("Thorn"), new Species("Cat"), new Breed("Chinchilla Persian"),
+                new Colour("white"), new BloodType("AB"), new Nric("S9015638A"),
+                getTagSet("newborn")),
+            new PetPatient(new PetPatientName("Alpha"), new Species("Dog"), new Breed("Alaskan Malamute"),
+                new Colour("black and white"), new BloodType("DEA 4+"), new Nric("S1317219F"),
+                getTagSet("aggressive", "newborn")),
+            new PetPatient(new PetPatientName("Beta"), new Species("Dog"), new Breed("Alaskan Malamute"),
+                new Colour("brown and white"), new BloodType("DEA 6+"), new Nric("S1317219F"),
+                getTagSet("microchipped", "hostile")),
+            new PetPatient(new PetPatientName("Gamma"), new Species("Dog"), new Breed("Alaskan Malamute"),
+                new Colour("red and white"), new BloodType("DEA 1.1-"), new Nric("S1317219F"),
+                getTagSet("microchipped")),
+            new PetPatient(new PetPatientName("Delta"), new Species("Dog"), new Breed("Alaskan Malamute"),
+                new Colour("brown and white"), new BloodType("DEA 1.1+"), new Nric("S1317219F"),
+                getTagSet("microchipped")),
+            new PetPatient(new PetPatientName("Epsilon"), new Species("Dog"), new Breed("Alaskan Malamute"),
+                new Colour("seal and white"), new BloodType("DEA 4+"), new Nric("S1317219F"),
+                getTagSet("microchipped", "aggressive")),
+            new PetPatient(new PetPatientName("Zeta"), new Species("Dog"), new Breed("Alaskan Malamute"),
+                new Colour("sable and white"), new BloodType("DEA 4-"), new Nric("F0123056T"),
+                getTagSet("microchipped", "senior")),
+            new PetPatient(new PetPatientName("Eta"), new Species("Dog"), new Breed("Alaskan Malamute"),
+                new Colour("brown and white"), new BloodType("DEA 6+"), new Nric("S1317219F"),
+                getTagSet("microchipped")),
+            new PetPatient(new PetPatientName("Theta"), new Species("Dog"), new Breed("Alaskan Malamute"),
+                new Colour("gray and white"), new BloodType("DEA 1.1+"), new Nric("S1317219F"),
+                getTagSet("microchipped", "senior")),
+            new PetPatient(new PetPatientName("Iota"), new Species("Dog"), new Breed("Alaskan Malamute"),
+                new Colour("black and white"), new BloodType("DEA 1.1+"), new Nric("S1317219F"),
+                getTagSet("microchipped", "arthritis"))
         };
     }
 
@@ -1685,23 +1828,49 @@ public class PetDependencyNotEmptyException extends Exception {
     public static Appointment[] getSampleAppointments() {
         return new Appointment[] {
             new Appointment(new Nric("S0123456B"), new PetPatientName("Ane"), new Remark("nil"),
-                    getLocalDateTime("2018-10-01 10:30"), getTagSet("Checkup")),
+                    getLocalDateTime("2018-10-01 10:30"), getTagSet("checkup")),
             new Appointment(new Nric("T0123456C"), new PetPatientName("Bei"), new Remark("nil"),
-                    getLocalDateTime("2018-10-02 10:30"), getTagSet("Presurgery")),
+                    getLocalDateTime("2018-10-02 10:30"), getTagSet("presurgery")),
             new Appointment(new Nric("F0123056T"), new PetPatientName("Famm"), new Remark("Home visit"),
-                    getLocalDateTime("2018-10-03 10:30"), getTagSet("Vaccination")),
+                    getLocalDateTime("2018-10-03 10:30"), getTagSet("vaccination")),
             new Appointment(new Nric("F0123056T"), new PetPatientName("Plan"), new Remark("Home visit"),
-                    getLocalDateTime("2018-10-03 11:00"), getTagSet("Vaccination")),
+                    getLocalDateTime("2018-10-03 11:00"), getTagSet("vaccination")),
             new Appointment(new Nric("T0123456C"), new PetPatientName("Bei"), new Remark("nil"),
-                    getLocalDateTime("2018-10-06 10:30"), getTagSet("Surgery")),
+                    getLocalDateTime("2018-10-06 10:30"), getTagSet("surgery")),
             new Appointment(new Nric("G0123456A"), new PetPatientName("Chae"), new Remark("nil"),
-                    getLocalDateTime("2018-10-07 09:30"), getTagSet("Checkup")),
+                    getLocalDateTime("2018-10-07 09:30"), getTagSet("checkup")),
             new Appointment(new Nric("F0123456B"), new PetPatientName("Don"), new Remark("nil"),
-                    getLocalDateTime("2018-10-07 15:30"), getTagSet("Microchipping")),
+                    getLocalDateTime("2018-10-07 15:30"), getTagSet("microchipping")),
             new Appointment(new Nric("T0123456C"), new PetPatientName("Bei"), new Remark("nil"),
-                    getLocalDateTime("2018-10-09 15:30"), getTagSet("Postsurgery")),
+                    getLocalDateTime("2018-10-09 15:30"), getTagSet("postsurgery")),
             new Appointment(new Nric("T0123456C"), new PetPatientName("Nei"), new Remark("nil"),
-                    getLocalDateTime("2018-10-09 16:00"), getTagSet("Checkup")),
+                    getLocalDateTime("2018-10-09 16:00"), getTagSet("checkup")),
+            new Appointment(new Nric("S1199380Z"), new PetPatientName("Blu"), new Remark("nil"),
+                    getLocalDateTime("2018-06-01 10:30"), getTagSet("vaccination")),
+            new Appointment(new Nric("S8267808E"), new PetPatientName("Red"), new Remark("Home visit"),
+                    getLocalDateTime("2018-06-01 11:30"), getTagSet("checkup")),
+            new Appointment(new Nric("S6654649G"), new PetPatientName("Fluffy"), new Remark("nil"),
+                    getLocalDateTime("2018-06-02 10:30"), getTagSet("vaccination")),
+            new Appointment(new Nric("S9408343E"), new PetPatientName("Oreo"), new Remark("nil"),
+                    getLocalDateTime("2018-06-02 11:00"), getTagSet("microchipping")),
+            new Appointment(new Nric("S2557566J"), new PetPatientName("Wabbit"), new Remark("nil"),
+                    getLocalDateTime("2018-06-03 10:30"), getTagSet("sterilisation")),
+            new Appointment(new Nric("S2330718I"), new PetPatientName("Ginger"), new Remark("nil"),
+                    getLocalDateTime("2018-06-03 09:30"), getTagSet("checkup")),
+            new Appointment(new Nric("F0123456B"), new PetPatientName("Juniper"), new Remark("Might require stay"),
+                    getLocalDateTime("2018-06-04 15:30"), getTagSet("sterilisation")),
+            new Appointment(new Nric("S7165937B"), new PetPatientName("Baron"), new Remark("nil"),
+                    getLocalDateTime("2018-06-04 16:30"), getTagSet("checkup")),
+            new Appointment(new Nric("S7165937B"), new PetPatientName("Sting"), new Remark("Home visit"),
+                    getLocalDateTime("2018-06-05 16:00"), getTagSet("vaccination")),
+            new Appointment(new Nric("S7165937B"), new PetPatientName("Riddle"), new Remark("Might require stay"),
+                    getLocalDateTime("2018-06-06 15:30"), getTagSet("sterilisation")),
+            new Appointment(new Nric("S0163456E"), new PetPatientName("Tiki"), new Remark("nil"),
+                    getLocalDateTime("2018-06-07 16:30"), getTagSet("checkup")),
+            new Appointment(new Nric("S2012044D"), new PetPatientName("Hero"), new Remark("Might require stay"),
+                    getLocalDateTime("2018-06-08 16:00"), getTagSet("sterilisation")),
+            new Appointment(new Nric("S9015638A"), new PetPatientName("Thorn"), new Remark("Might require stay"),
+                    getLocalDateTime("2018-06-08 18:00"), getTagSet("sterilisation")),
         };
     }
 
@@ -1910,7 +2079,6 @@ public class XmlAdaptedAppointment {
     private void changeWeekView(LocalDate date) {
         WeekFields weekFields = WeekFields.SUNDAY_START;
         int week = date.get(weekFields.weekOfWeekBasedYear()) - 1;
-        System.out.println(week);
 
         if (week == 0 && date.getMonthValue() == 12) {
             //wraparound

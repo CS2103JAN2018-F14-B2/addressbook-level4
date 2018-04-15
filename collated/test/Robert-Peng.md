@@ -352,11 +352,12 @@ public class PetPatientListPanelTest extends GuiUnitTest {
      */
     public static void assertCardDisplaysPetPatient(PetPatient expectedPetPatient, PetPatientCardHandle actualCard) {
         assertEquals(expectedPetPatient.getName().toString(), actualCard.getName());
-        assertEquals(expectedPetPatient.getSpecies().toString(), actualCard.getSpecies());
-        assertEquals(expectedPetPatient.getBreed().toString(), actualCard.getBreed());
-        assertEquals(expectedPetPatient.getColour().toString(), actualCard.getColour());
-        assertEquals(expectedPetPatient.getBloodType().toString(), actualCard.getBloodType());
-        assertEquals(expectedPetPatient.getOwner().toString(), actualCard.getOwnerNric());
+        assertEquals("Species:\t\t" + expectedPetPatient.getSpecies().toString(), actualCard.getSpecies());
+        assertEquals("Breed:\t\t" + expectedPetPatient.getBreed().toString(), actualCard.getBreed());
+        assertEquals("Colour:\t\t" + expectedPetPatient.getColour().toString(), actualCard.getColour());
+        assertEquals("Blood Type:\t" + expectedPetPatient.getBloodType().toString(),
+                actualCard.getBloodType());
+        assertEquals("Owner NRIC:\t" + expectedPetPatient.getOwner().toString(), actualCard.getOwnerNric());
 
         //assertTagsEqual(expectedPetPatient, actualCard);
     }
@@ -394,7 +395,7 @@ public class PetPatientListPanelTest extends GuiUnitTest {
         /* Case: missing nric -> rejected */
         command = AddCommand.COMMAND_WORD + " " + OPTION_OWNER + NAME_DESC_AMY + PHONE_DESC_AMY + EMAIL_DESC_AMY
                 + ADDRESS_DESC_AMY;
-        assertCommandFailure(command, String.format(MESSAGE_INVALID_PARAMETER_FORMAT, AddCommand.MESSAGE_PERSON));
+        assertCommandFailure(command, String.format(MESSAGE_INVALID_PARAMETER_FORMAT, AddCommand.MESSAGE_ERROR_PERSON));
 ```
 ###### \java\systemtests\AddCommandSystemTest.java
 ``` java
@@ -419,6 +420,6 @@ public class PetPatientListPanelTest extends GuiUnitTest {
 ``` java
         /* Case: invalid nric -> rejected */
         assertCommandFailure(EditCommand.COMMAND_WORD + OPTION_OWNER + " "
-                + INDEX_FIRST_PERSON.getOneBased() + INVALID_NRIC_DESC,
+                        + INDEX_FIRST_PERSON.getOneBased() + INVALID_NRIC_DESC,
                 Nric.MESSAGE_NRIC_CONSTRAINTS);
 ```

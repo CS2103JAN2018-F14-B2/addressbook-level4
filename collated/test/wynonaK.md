@@ -1629,6 +1629,24 @@ public class XmlAdaptedAppointmentTest {
 
 }
 ```
+###### \java\seedu\address\storage\XmlAdaptedPersonTest.java
+``` java
+    @Test
+    public void toModelType_invalidNric_throwsIllegalValueException() {
+        XmlAdaptedPerson person =
+                new XmlAdaptedPerson(VALID_NAME, VALID_PHONE, VALID_EMAIL, VALID_ADDRESS, INVALID_NRIC, VALID_TAGS);
+        String expectedMessage = Nric.MESSAGE_NRIC_CONSTRAINTS;
+        Assert.assertThrows(IllegalValueException.class, expectedMessage, person::toModelType);
+    }
+
+    @Test
+    public void toModelType_nullNric_throwsIllegalValueException() {
+        XmlAdaptedPerson person = new XmlAdaptedPerson(VALID_NAME, VALID_PHONE,
+                VALID_EMAIL, VALID_ADDRESS, null, VALID_TAGS);
+        String expectedMessage = String.format(MISSING_FIELD_MESSAGE_FORMAT, Nric.class.getSimpleName());
+        Assert.assertThrows(IllegalValueException.class, expectedMessage, person::toModelType);
+    }
+```
 ###### \java\seedu\address\testutil\AppointmentBuilder.java
 ``` java
 /**
@@ -2309,6 +2327,24 @@ public class ListAppointmentCommandSystemTest extends AddressBookSystemTest {
         //null, fail
         assertCommandFailure(ListAppointmentCommand.COMMAND_WORD + " ",
                 String.format(Messages.MESSAGE_INVALID_COMMAND_FORMAT, ListAppointmentCommand.MESSAGE_USAGE));
+
+        String expectedMessage = "You can only list past appointments if you had an appointment"
+                + " in the year of the specified field!";
+        //listappt past year with no appointments, fail
+        assertCommandFailure(ListAppointmentCommand.COMMAND_WORD + " -y 2016",
+                expectedMessage);
+
+        //listappt past month of year with no appointments, fail
+        assertCommandFailure(ListAppointmentCommand.COMMAND_WORD + " -m 2016-01",
+                expectedMessage);
+
+        //listappt past week of year with no appointments, fail
+        assertCommandFailure(ListAppointmentCommand.COMMAND_WORD + " -w 2016-01-01",
+                expectedMessage);
+
+        //listappt past date of year with no appointments, fail
+        assertCommandFailure(ListAppointmentCommand.COMMAND_WORD + " -d 2016-01-01",
+                expectedMessage);
 
         //writing wrong caps, fail
         assertCommandFailure("LiStApPt",

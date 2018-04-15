@@ -39,14 +39,20 @@ public class EditCommand extends UndoableCommand {
             + "[" + PREFIX_TAG + "TAG]...\n"
             + "\n";
 
-    public static final String MESSAGE_EDIT_PERSON_SUCCESS = "Edited Person: %1$s";
+    public static final String MESSAGE_EDIT_PERSON_SUCCESS = "Edited Contact: %1$s";
     public static final String MESSAGE_EDIT_PET_PATIENT_SUCCESS = "Edited Pet Patient: %1$s";
     public static final String MESSAGE_EDIT_APPOINTMENT_SUCCESS = "Edited Appointment: %1$s";
     public static final String MESSAGE_NOT_EDITED = "At least one field to edit must be provided.";
-    public static final String MESSAGE_DUPLICATE_PERSON = "This person already exists in the address book.";
+    public static final String MESSAGE_DUPLICATE_PERSON = "This contact already exists in the address book.";
     public static final String MESSAGE_DUPLICATE_PET_PATIENT = "This pet patient already exists in the address book.";
     public static final String MESSAGE_DUPLICATE_APPOINTMENT = "This appointment already exists in the address book.";
-
+    public static final String MESSAGE_MISSING_PERSON = "The target contact cannot be missing.";
+    public static final String MESSAGE_MISSING_PET_PATIENT = "The target pet patient cannot be missing";
+    public static final String MESSAGE_MISSING_APPOINTMENT = "The target appointment cannot be missing.";
+    public static final String MESSAGE_DUPLICATE_APPOINTMENT_TIMING = "Duplicate in appointment timing.";
+    public static final String MESSAGE_PAST_APPOINTMENT = "Appointment cannot be in the past.";
+    public static final String MESSAGE_CONCURRENT_APPOINTMENT = "Appointment cannot be concurrent "
+            + "with other appointments.";
     /**
      * Enum to support the type of edit command that the user wishes to execute.
      */
@@ -111,8 +117,6 @@ public class EditCommand extends UndoableCommand {
             case EDIT_PERSON:
                 resolvePersonDependencies();
                 model.updatePerson(personToEdit, editedPerson);
-                System.out.println(personToEdit.getNric().toString());
-                System.out.println(editedPerson.getNric().toString());
                 break;
             case EDIT_PET_PATIENT:
                 resolvePetPatientDependencies();
@@ -120,6 +124,9 @@ public class EditCommand extends UndoableCommand {
                 break;
             case EDIT_APPOINTMENT:
                 checkForClashes();
+                // checkForSameAppointmentTiming();
+                checkForConcurrentAppointments();
+                checkForPastAppointment();
                 model.updateAppointment(appointmentToEdit, editedAppointment);
                 break;
             default:
@@ -128,15 +135,21 @@ public class EditCommand extends UndoableCommand {
         } catch (DuplicatePersonException dpe) {
             throw new CommandException(MESSAGE_DUPLICATE_PERSON);
         } catch (PersonNotFoundException pnfe) {
-            throw new AssertionError("The target person cannot be missing");
+            throw new CommandException(MESSAGE_MISSING_PERSON);
         } catch (DuplicatePetPatientException dppe) {
             throw new CommandException(MESSAGE_DUPLICATE_PET_PATIENT);
         } catch (PetPatientNotFoundException ppnfe) {
-            throw new AssertionError("The target pet patient cannot be missing");
+            throw new CommandException(MESSAGE_MISSING_PET_PATIENT);
+        } catch (DuplicateDateTimeException ddte) {
+            throw new CommandException(MESSAGE_DUPLICATE_APPOINTMENT_TIMING);
         } catch (DuplicateAppointmentException dae) {
             throw new CommandException(MESSAGE_DUPLICATE_APPOINTMENT);
         } catch (AppointmentNotFoundException anfe) {
-            throw new AssertionError("The target appointment cannot be missing");
+            throw new CommandException(MESSAGE_MISSING_APPOINTMENT);
+        } catch (PastAppointmentException pae) {
+            throw new CommandException(MESSAGE_PAST_APPOINTMENT);
+        } catch (ConcurrentAppointmentException cae) {
+            throw new CommandException(MESSAGE_CONCURRENT_APPOINTMENT);
         }
         switch (type) {
         case EDIT_PERSON:
@@ -165,7 +178,7 @@ public class EditCommand extends UndoableCommand {
         Nric newNric = editedPerson.getNric();
 
         if (!oldNric.equals(newNric)) {
-            updatePetPatienstByOwnerNric(oldNric, newNric);
+            updatePetPatientsByOwnerNric(oldNric, newNric);
             updateAppointmentByOwnerNric(oldNric, newNric);
         }
     }
@@ -187,7 +200,10 @@ public class EditCommand extends UndoableCommand {
             if (newOwner == null) {
                 throw new CommandException("New owner must exist first before updating pet patient's owner NRIC!");
             }
-            updateAppointmentByOwnerNric(oldNric, newNric);
+            // we only update nric for appointments for that specific pet patient!
+            // this is because it might be an owner transfer. If there are some other pets under the previous owner,
+            // he/she may still be holding on to these pets.
+            updateAppointmentByOwnerNricForSpecificPetName(oldNric, newNric, oldPetName);
         }
         if (!oldPetName.equals(newPetName)) { // name edited
             updateAppointmentByPetPatientName(newNric, oldPetName, newPetName);
@@ -195,24 +211,59 @@ public class EditCommand extends UndoableCommand {
     }
 
     /**
-     * Checks whether there are clashes in appointment date and time
+     * Checks whether there are clashes in appointment date and time (i.e. same timing with another appointment)
      */
-    private void checkForClashes() throws CommandException {
+    private void checkForClashes() throws DuplicateDateTimeException {
         LocalDateTime oldDateTime = appointmentToEdit.getDateTime();
         LocalDateTime newDateTime = editedAppointment.getDateTime();
 
         if (!oldDateTime.equals(newDateTime)) {
             Appointment appointmentWithClash = model.getClashingAppointment(newDateTime);
             if (appointmentWithClash != null) {
-                throw new CommandException("Clash in timing exists. Please change to another date / time.");
+                throw new DuplicateDateTimeException();
             }
+        }
+    }
+
+    /**
+     * Checks whether there are clashes in appointment date and time (concurrent appointments)
+     */
+    private void checkForConcurrentAppointments() throws ConcurrentAppointmentException {
+        LocalDateTime oldDateTime = appointmentToEdit.getDateTime();
+        LocalDateTime newDateTime = editedAppointment.getDateTime();
+
+        if (model.hasConcurrentAppointment(oldDateTime, newDateTime)) {
+            throw new ConcurrentAppointmentException();
+        }
+    }
+
+    /**
+     * Checks whether appointment datetime given is in the past
+     */
+    private void checkForPastAppointment() throws PastAppointmentException {
+        LocalDateTime newDateTime = editedAppointment.getDateTime();
+
+        if (newDateTime.isBefore(LocalDateTime.now())) {
+            throw new PastAppointmentException();
+        }
+    }
+
+    /**
+     * Checks whether the new timing for the appointment is equivalent to the old one
+     */
+    private void checkForSameAppointmentTiming() throws CommandException {
+        LocalDateTime oldDateTime = appointmentToEdit.getDateTime();
+        LocalDateTime newDateTime = editedAppointment.getDateTime();
+
+        if (newDateTime.equals(oldDateTime)) {
+            throw new CommandException("Appointment timing has not changed.");
         }
     }
 
     /**
      * Helper function to update pet patient's owner from an old nric to new nric
      */
-    private void updatePetPatienstByOwnerNric(Nric oldNric, Nric newNric) throws
+    private void updatePetPatientsByOwnerNric(Nric oldNric, Nric newNric) throws
             PetPatientNotFoundException, DuplicatePetPatientException {
 
         ArrayList<PetPatient> petPatientArrayList = model.getPetPatientsWithNric(oldNric);
@@ -254,6 +305,24 @@ public class EditCommand extends UndoableCommand {
                 model.getAppointmentsWithNricAndPetName(ownerNric, oldPetName);
         EditAppointmentDescriptor ead = new EditAppointmentDescriptor();
         ead.setPetPatientName(newPetName);
+
+        for (Appointment currAppointment : appointmentArrayList) {
+            Appointment modifiedAppointment = createEditedAppointment(currAppointment, ead);
+            model.updateAppointment(currAppointment, modifiedAppointment);
+            model.updateFilteredAppointmentList(PREDICATE_SHOW_ALL_APPOINTMENTS);
+        }
+    }
+
+    /**
+     * Helper function to update the pet patient owner's NRIC for all its appointment
+     */
+    private void updateAppointmentByOwnerNricForSpecificPetName(Nric oldNric, Nric newNric, PetPatientName oldPetName)
+            throws DuplicateAppointmentException, AppointmentNotFoundException {
+
+        ArrayList<Appointment> appointmentArrayList =
+                model.getAppointmentsWithNricAndPetName(oldNric, oldPetName);
+        EditAppointmentDescriptor ead = new EditAppointmentDescriptor();
+        ead.setOwnerNric(newNric);
 
         for (Appointment currAppointment : appointmentArrayList) {
             Appointment modifiedAppointment = createEditedAppointment(currAppointment, ead);
@@ -407,9 +476,22 @@ public class EditCommand extends UndoableCommand {
 
         // state check
         EditCommand e = (EditCommand) other;
-        return index.equals(e.index)
-                && editPersonDescriptor.equals(e.editPersonDescriptor)
-                && Objects.equals(personToEdit, e.personToEdit);
+        switch (type) {
+        case EDIT_PERSON:
+            return index.equals(e.index)
+                    && editPersonDescriptor.equals(e.editPersonDescriptor)
+                    && Objects.equals(personToEdit, e.personToEdit);
+        case EDIT_PET_PATIENT:
+            return index.equals(e.index)
+                    && editPetPatientDescriptor.equals(e.editPetPatientDescriptor)
+                    && Objects.equals(petPatientToEdit, e.petPatientToEdit);
+        case EDIT_APPOINTMENT:
+            return index.equals(e.index)
+                    && editAppointmentDescriptor.equals(e.editAppointmentDescriptor)
+                    && Objects.equals(appointmentToEdit, e.appointmentToEdit);
+        default:
+            return false;
+        }
     }
 }
 ```
@@ -1040,6 +1122,24 @@ public class EditCommandParser implements Parser<EditCommand> {
             }
         }
         return null;
+    }
+
+    @Override
+    public boolean hasConcurrentAppointment(LocalDateTime oldDateTime, LocalDateTime newDateTime) {
+        for (Appointment a : addressBook.getAppointmentList()) {
+            LocalDateTime dateTime = a.getDateTime();
+            if (newDateTime.isAfter(dateTime)
+                    && newDateTime.isBefore(dateTime.plusMinutes(30))
+                    && !dateTime.equals(oldDateTime)) {
+                return true;
+            }
+            if (newDateTime.isBefore(dateTime)
+                    && newDateTime.plusMinutes(30).isAfter(dateTime)
+                    && !dateTime.equals(oldDateTime)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

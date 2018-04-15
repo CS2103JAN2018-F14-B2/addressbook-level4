@@ -48,7 +48,7 @@
             try {
                 updatePerson(person, updatedPerson);
             } catch (DuplicatePersonException dpe) {
-                throw new AssertionError("Modifying tag only should not result in duplicate person.");
+                throw new AssertionError("Modifying tag only should not result in duplicate contact.");
             }
         } else {
             return;
@@ -65,7 +65,7 @@
                 removeTagParticular(tag, currPerson);
             }
         } catch (PersonNotFoundException pnfe) {
-            throw new AssertionError("Impossible as obtained from address book.");
+            throw new AssertionError("Impossible as obtained from Medeina.");
         }
     }
 

@@ -62,7 +62,7 @@ import seedu.address.commons.exceptions.IllegalValueException;
 public class ConcurrentAppointmentException extends IllegalValueException {
 
     public ConcurrentAppointmentException () {
-        super("AddressBook should not add appointments to on-going appointment slots");
+        super("Medeina should not add appointments to on-going appointment slots");
     }
 
 }
@@ -79,7 +79,7 @@ import seedu.address.commons.exceptions.IllegalValueException;
 public class PastAppointmentException extends IllegalValueException {
 
     public PastAppointmentException() {
-        super("AddressBook should not add appointments with past DateTime");
+        super("Medeina should not add appointments with past DateTime");
     }
 }
 
@@ -91,7 +91,7 @@ public class PastAppointmentException extends IllegalValueException {
  * Guarantees: immutable; is valid as declared in {@link #isValidNRIC(String)}
  */
 public class Nric {
-    public static final String MESSAGE_NRIC_CONSTRAINTS = "Person NRIC should be of the format #0000000@ "
+    public static final String MESSAGE_NRIC_CONSTRAINTS = "Contact NRIC should be of the format #0000000@ "
         + "where # is a letter that can be S T F or G,\n"
         + "0000000 represents 7 digits which can be any number from 0-9,\n"
         + "@ can be any alphabet A-Z.\n"
@@ -238,7 +238,7 @@ public class CalendarWindow extends UiPart<Region> {
         builder.append(appointmentCounter)
             .append(". ")
             .append(appointment.getPetPatientName().toString() + "\n")
-            .append("Owner Nric: " + appointment.getOwnerNric() + "\n")
+            .append("Contact Nric: " + appointment.getOwnerNric() + "\n")
             .append("Appointment type: " + appointment.getTagString());
 
         builder.append("\n");
@@ -353,11 +353,11 @@ public class PetPatientCard extends UiPart<Region> {
         this.petPatient = petPatient;
         id.setText(displayedIndex + ". ");
         name.setText(petPatient.getName().toString());
-        species.setText(petPatient.getSpecies().toString());
-        breed.setText(petPatient.getBreed().toString());
-        colour.setText(petPatient.getColour().toString());
-        bloodType.setText(petPatient.getBloodType().toString());
-        ownerNric.setText(petPatient.getOwner().toString());
+        species.setText("Species:\t\t" + petPatient.getSpecies().toString());
+        breed.setText("Breed:\t\t" + petPatient.getBreed().toString());
+        colour.setText("Colour:\t\t" + petPatient.getColour().toString());
+        bloodType.setText("Blood Type:\t" + petPatient.getBloodType().toString());
+        ownerNric.setText("Owner NRIC:\t" + petPatient.getOwner().toString());
         createTags(petPatient);
     }
 

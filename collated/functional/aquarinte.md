@@ -36,47 +36,47 @@ public class ChangeThemeRequestEvent extends BaseEvent {
 ###### \java\seedu\address\logic\commands\AddCommand.java
 ``` java
 /**
- * Adds a Person, Petpatient and/or Appointment to the address book.
+ * Adds a Person, Petpatient and/or Appointment to Medeina.
  */
 public class AddCommand extends UndoableCommand {
 
     public static final String COMMAND_WORD = "add";
     public static final String COMMAND_ALIAS = "a";
 
-    public static final String MESSAGE_USAGE = "To add a new person: "
-            + COMMAND_WORD + " -o " + PREFIX_NAME + "NAME "
+    public static final String MESSAGE_USAGE = "To add a new contact: "
+            + COMMAND_WORD + " " + OPTION_OWNER + " " + PREFIX_NAME + "NAME "
             + PREFIX_PHONE + "PHONE "
             + PREFIX_EMAIL + "EMAIL "
             + PREFIX_ADDRESS + "ADDRESS "
             + PREFIX_NRIC + "NRIC "
             + "[" + PREFIX_TAG + "TAG]...\n"
             + "To add a new pet patient: "
-            + COMMAND_WORD + " -p " + PREFIX_NAME + "NAME "
+            + COMMAND_WORD + " " + OPTION_PETPATIENT + " " + PREFIX_NAME + "PET_NAME "
             + PREFIX_SPECIES + "SPECIES "
             + PREFIX_BREED + "BREED "
             + PREFIX_COLOUR + "COLOUR "
             + PREFIX_BLOODTYPE + "BLOOD_TYPE "
-            + "[" + PREFIX_TAG + "TAG]... -o " + PREFIX_NRIC + "OWNER_NRIC\n"
+            + "[" + PREFIX_TAG + "TAG]... " + OPTION_OWNER + " " + PREFIX_NRIC + "NRIC\n"
             + "To add a new appointment: "
-            + COMMAND_WORD + " -a " + PREFIX_DATE + "DATE "
+            + COMMAND_WORD + " " + OPTION_APPOINTMENT + " " + PREFIX_DATE + "DATE "
             + PREFIX_REMARK + "REMARK "
-            + PREFIX_TAG + "TYPE OF APPOINTMENT... -o " + PREFIX_NRIC + "OWNER_NRIC -p "
-            + PREFIX_NAME + " PET_NAME\n"
-            + "To add all new: " + COMMAND_WORD + " -o " + PREFIX_NAME + "OWNER_NAME "
+            + PREFIX_TAG + "TYPE OF APPOINTMENT... " + OPTION_OWNER + " " + PREFIX_NRIC + "NRIC "
+            + OPTION_PETPATIENT + " " + PREFIX_NAME + " PET_NAME\n"
+            + "To add all new: " + COMMAND_WORD + " " + OPTION_OWNER + " " + PREFIX_NAME + "NAME "
             + PREFIX_PHONE + "PHONE "
             + PREFIX_EMAIL + "EMAIL "
             + PREFIX_ADDRESS + "ADDRESS "
             + PREFIX_NRIC + "NRIC "
-            + "[" + PREFIX_TAG + "TAG]... -p " + PREFIX_NAME + "PET_NAME "
+            + "[" + PREFIX_TAG + "TAG]... " + OPTION_PETPATIENT + " " + PREFIX_NAME + "PET_NAME "
             + PREFIX_SPECIES + "SPECIES "
             + PREFIX_BREED + "BREED "
             + PREFIX_COLOUR + "COLOUR "
             + PREFIX_BLOODTYPE + "BLOOD_TYPE "
-            + "[" + PREFIX_TAG + "TAG]... -a "  + PREFIX_DATE + "DATE "
+            + "[" + PREFIX_TAG + "TAG]... " + OPTION_APPOINTMENT + " "  + PREFIX_DATE + "DATE "
             + PREFIX_REMARK + "REMARK "
             + PREFIX_TAG + "TYPE OF APPOINTMENT...";
 
-    public static final String MESSAGE_PERSON = "option -o\n"
+    public static final String MESSAGE_ERROR_PERSON = "option " + OPTION_OWNER + "\n"
             + "Parameters: "
             + PREFIX_NAME + "NAME "
             + PREFIX_PHONE + "PHONE "
@@ -84,54 +84,66 @@ public class AddCommand extends UndoableCommand {
             + PREFIX_ADDRESS + "ADDRESS "
             + PREFIX_NRIC + "NRIC "
             + "[" + PREFIX_TAG + "TAG]...\n"
-            + "Example: " + "-o "
+            + "Example: " + OPTION_OWNER + " "
             + PREFIX_NAME + "John Doe "
             + PREFIX_PHONE + "98765432 "
             + PREFIX_EMAIL + "johnd@example.com "
             + PREFIX_ADDRESS + "311, Clementi Ave 2, #02-25 "
             + PREFIX_NRIC + "S1234567Q "
-            + PREFIX_TAG + "medical supplier";
+            + PREFIX_TAG + "supplier";
 
-    public static final String MESSAGE_APPOINTMENT = "option -a\n"
+    public static final String MESSAGE_ERROR_APPOINTMENT = "option " + OPTION_APPOINTMENT + "\n"
             + "Parameters: "
             + PREFIX_DATE + "DATE "
             + PREFIX_REMARK + "REMARK "
             + PREFIX_TAG + "TYPE OF APPOINTMENT...\n"
-            + "Example: " + "-a "
+            + "Example: " + OPTION_APPOINTMENT + " "
             + PREFIX_DATE + "2018-12-31 12:30 "
             + PREFIX_REMARK + "nil "
             + PREFIX_TAG + "checkup "
             + PREFIX_TAG + "vaccination";
 
-    public static final String MESSAGE_PETPATIENT = "option -p\n"
+    public static final String MESSAGE_ERROR_PETPATIENT = "option " + OPTION_PETPATIENT + "\n"
             + "Parameters: "
-            + PREFIX_NAME + "NAME "
+            + PREFIX_NAME + "PET_NAME "
             + PREFIX_SPECIES + "SPECIES "
             + PREFIX_BREED + "BREED "
             + PREFIX_COLOUR + "COLOUR "
             + PREFIX_BLOODTYPE + "BLOOD_TYPE "
             + "[" + PREFIX_TAG + "TAG]...\n"
-            + "Example: " + "-p "
+            + "Example: " + OPTION_PETPATIENT + " "
             + PREFIX_NAME + "Jewel "
             + PREFIX_SPECIES + "Cat "
             + PREFIX_BREED + "Persian Ragdoll "
-            + PREFIX_COLOUR + "Calico "
-            + PREFIX_BLOODTYPE + "AB";
+            + PREFIX_COLOUR + "calico "
+            + PREFIX_BLOODTYPE + "AB "
+            + PREFIX_TAG + "underweight";
 
-    public static final String MESSAGE_SUCCESS = "New person added: %1$s\n";
-    public static final String MESSAGE_DUPLICATE_PERSON = "This person already exists in Medeina.";
-    public static final String MESSAGE_DUPLICATE_NRIC = "This is already someone with this NRIC.";
+    public static final String MESSAGE_SUCCESS_PERSON = "New contact added: %1$s\n";
+    public static final String MESSAGE_SUCCESS_PETPATIENT = "New pet patient added: %1$s \n"
+            + "under contact: %2$s";
+    public static final String MESSAGE_SUCCESS_APPOINTMENT = "New appointment made: %1$s\n"
+            + "under contact: %2$s\n"
+            + "for pet patient: %3$s";
+    public static final String MESSAGE_SUCCESS_EVERYTHING = MESSAGE_SUCCESS_PERSON
+            + "New pet patient added: %2$s\n"
+            + "New appointment made: %3$s";
+    public static final String MESSAGE_DUPLICATE_PERSON = "This contact already exists in Medeina.";
+    public static final String MESSAGE_DUPLICATE_NRIC = "There is already a contact with this NRIC.";
     public static final String MESSAGE_DUPLICATE_APPOINTMENT = "This particular appointment already exists in Medeina.";
     public static final String MESSAGE_DUPLICATE_DATETIME = "This date time is already taken by another appointment.";
     public static final String MESSAGE_DUPLICATE_PET_PATIENT = "This pet patient already exists in Medeina";
     public static final String MESSAGE_INVALID_NRIC = "The specified NRIC does not belong to anyone in Medeina."
-            + " Please add a new person.";
-    public static final String MESSAGE_MISSING_NRIC_PREFIX = "option -o\n"
-            + "Missing prefix \"nr/\" for NRIC.";
-    public static final String MESSAGE_MISSING_PET_PATIENT_NAME_PREFIX = "option -p\n"
-            + "Missing prefix \"n/\" for pet patient name.";
+            + " Please add a new contact.";
     public static final String MESSAGE_INVALID_PET_PATIENT = "The specified pet cannot be found under the specified "
-            + "owner in Medeina. Please add a new pet patient.";
+            + "contact in Medeina. Please add a new pet patient.";
+    public static final String MESSAGE_MISSING_NRIC_PREFIX = "option -o\n"
+            + "Missing prefix nr/ for NRIC.";
+    public static final String MESSAGE_MISSING_PET_PATIENT_NAME_PREFIX = "option -p\n"
+            + "Missing prefix n/ for pet patient name.";
+    public static final String MESSAGE_CONCURRENT_APPOINTMENT = "Appointment cannot be concurrent with other "
+            + "appointments.";
+    public static final String MESSAGE_PAST_APPOINTMENT = "Appointment cannot be created with past DateTime.";
 
     private Person person;
     private PetPatient petPatient;
@@ -139,7 +151,6 @@ public class AddCommand extends UndoableCommand {
     private Nric ownerNric;
     private PetPatientName petPatientName;
     private int type;
-    private String message = "New person added: %1$s\n";
 
     /**
      * Creates an AddCommand to add the specified {@code Person} and {@code PetPatient} and {@code Appointment}.
@@ -152,7 +163,6 @@ public class AddCommand extends UndoableCommand {
         this.petPatient = petPatient;
         this.appt = appt;
         type = 1;
-        message += "New pet patient added: %2$s\nNew appointment made: %3$s";
     }
 
     /**
@@ -168,7 +178,6 @@ public class AddCommand extends UndoableCommand {
         this.ownerNric = ownerNric;
         this.petPatientName = petPatientName;
         type = 2;
-        message = "New appointment made: %1$s\nunder owner: %2$s\nfor pet patient: %3$s";
     }
 
     /**
@@ -181,7 +190,6 @@ public class AddCommand extends UndoableCommand {
         this.petPatient = petPatient;
         this.ownerNric = ownerNric;
         type = 3;
-        message = "New pet patient added: %1$s \nunder owner: %2$s";
     }
 
     /**
@@ -193,17 +201,13 @@ public class AddCommand extends UndoableCommand {
         type = 4;
     }
 
-    public String getMessage() {
-        return message;
-    }
-
     @Override
     public CommandResult executeUndoableCommand() throws CommandException {
         requireNonNull(model);
         try {
             switch (type) {
             case 1: return addAllNew();
-            case 2: return addNewAppt();
+            case 2: return addNewAppointment();
             case 3: return addNewPetPatient();
             case 4: return addNewPerson();
             default: throw new CommandException(MESSAGE_USAGE);
@@ -220,52 +224,39 @@ public class AddCommand extends UndoableCommand {
         } catch (DuplicateDateTimeException e) {
             throw new CommandException(MESSAGE_DUPLICATE_DATETIME);
         } catch (ConcurrentAppointmentException e) {
-            throw new AssertionError("Concurrent appointment.");
+            throw new CommandException(MESSAGE_CONCURRENT_APPOINTMENT);
         } catch (PastAppointmentException e) {
-            throw new AssertionError("Past-date appointment.");
+            throw new CommandException(MESSAGE_PAST_APPOINTMENT);
         }
     }
 
     private CommandResult addNewPerson() throws DuplicatePersonException, DuplicateNricException {
         model.addPerson(person);
-        return new CommandResult(String.format(message, person));
+        return new CommandResult(String.format(MESSAGE_SUCCESS_PERSON, person));
     }
 
     /**
-     * Add a new pet patient under an existing person.
+     * Adds a new pet patient under an existing person.
      */
     private CommandResult addNewPetPatient() throws DuplicatePetPatientException, CommandException {
-        person = model.getPersonWithNric(ownerNric);
-        if (person != null) {
-            model.addPetPatient(petPatient);
-            return new CommandResult(String.format(message, petPatient, person));
-        }
-        throw new CommandException(MESSAGE_INVALID_NRIC);
+        person = getValidOwner(ownerNric);
+        model.addPetPatient(petPatient);
+        return new CommandResult(String.format(MESSAGE_SUCCESS_PETPATIENT, petPatient, person));
     }
 
     /**
-     * Add a new appointment for an existing pet patient under an existing person.
+     * Adds a new appointment for an existing pet patient, under an existing person.
      */
-    private CommandResult addNewAppt() throws CommandException, DuplicateAppointmentException,
+    private CommandResult addNewAppointment() throws CommandException, DuplicateAppointmentException,
             DuplicateDateTimeException, ConcurrentAppointmentException, PastAppointmentException {
-        person = model.getPersonWithNric(ownerNric);
-        petPatient = model.getPetPatientWithNricAndName(ownerNric, petPatientName);
-
-        if (person == null) {
-            throw new CommandException(MESSAGE_INVALID_NRIC);
-        }
-
-        if (petPatient == null) {
-            throw new CommandException(MESSAGE_INVALID_PET_PATIENT);
-        }
-
+        person = getValidOwner(ownerNric);
+        petPatient = getValidPetPatient(ownerNric, petPatientName);
         model.addAppointment(appt);
-        return new CommandResult(String.format(message, appt, person, petPatient));
+        return new CommandResult(String.format(MESSAGE_SUCCESS_APPOINTMENT, appt, person, petPatient));
     }
 
     /**
-     * Add a new appointment, a new pet patient and a new person.
-     * (New appointment for the new patient under a new person).
+     * Adds a new appointment for a new pet patient under a new person.
      */
     private CommandResult addAllNew() throws DuplicatePersonException, DuplicateNricException,
             DuplicatePetPatientException, DuplicateAppointmentException, DuplicateDateTimeException,
@@ -273,7 +264,49 @@ public class AddCommand extends UndoableCommand {
         model.addPerson(person);
         model.addPetPatient(petPatient);
         model.addAppointment(appt);
-        return new CommandResult(String.format(message, person, petPatient, appt));
+        return new CommandResult(String.format(MESSAGE_SUCCESS_EVERYTHING, person, petPatient, appt));
+    }
+
+    /**
+     * Returns a person object that exists in Medeina.
+     */
+    private Person getValidOwner(Nric ownerNric) throws CommandException {
+        Person validOwner = model.getPersonWithNric(ownerNric);
+        if (validOwner == null) {
+            throw new CommandException(MESSAGE_INVALID_NRIC);
+        }
+        return validOwner;
+    }
+
+    /**
+     * Returns a petpatient object that exists in Medeina.
+     */
+    private PetPatient getValidPetPatient(Nric ownerNric, PetPatientName petPatientName) throws CommandException {
+        PetPatient validPatient  = model.getPetPatientWithNricAndName(ownerNric, petPatientName);
+        if (validPatient == null) {
+            throw new CommandException(MESSAGE_INVALID_PET_PATIENT);
+        }
+        return validPatient;
+    }
+
+    /**
+     * Checks if two objects are the same for equals() method.
+     *
+     * Returns true if both objects are equivalent.
+     * Returns true if both objects are null.
+     */
+    public boolean isTheSame(Object one, Object two) {
+        if (one != null && two != null) {
+            if (one.equals(two)) {
+                return true;
+            }
+        }
+
+        if (one == null && two == null) {
+            return true;
+        }
+
+        return false;
     }
 
     @Override
@@ -297,25 +330,6 @@ public class AddCommand extends UndoableCommand {
         } else {
             return false;
         }
-    }
-
-    /**
-     * Checks if both objects are the same.
-     * Returns true if both objects are equivalent.
-     * Returns true if both objects are null.
-     */
-    public boolean isTheSame(Object one, Object two) {
-        if (one != null && two != null) {
-            if (one.equals(two)) {
-                return true;
-            }
-        }
-
-        if (one == null && two == null) {
-            return true;
-        }
-
-        return false;
     }
 }
 ```
@@ -362,6 +376,11 @@ public class ChangeThemeCommand extends Command {
     @Override
     public Set<String> getAllCommandWords() {
         return cliSyntax.getCommandWords();
+    }
+
+    @Override
+    public Set<String> getCommandWordsWithOptionPrefix() {
+        return cliSyntax.getCommandWordsWithOptionPrefix();
     }
 
     @Override
@@ -431,12 +450,10 @@ public class ChangeThemeCommand extends Command {
     @Override
     public void setAttributesForPersonObjects() {
         nricInModel = new HashSet<>();
-        phoneNumbersInModel = new HashSet<>();
         personTagsInModel = new HashSet<>();
 
         for (Person p : model.getAddressBook().getPersonList()) {
             nricInModel.add(p.getNric().toString());
-            phoneNumbersInModel.add(p.getPhone().toString());
             personTagsInModel.addAll(p.getTags());
         }
     }
@@ -486,12 +503,12 @@ public class ChangeThemeCommand extends Command {
 public class AddCommandParser implements Parser<AddCommand> {
 
     private static final Pattern ADD_COMMAND_FORMAT_ALL_NEW = Pattern.compile("-(o)+(?<ownerInfo>.*)"
-            + "-(p)+(?<petInfo>.*)-(a)+(?<apptInfo>.*)");
+        + "-(p)+(?<petInfo>.*)-(a)+(?<apptInfo>.*)");
     private static final Pattern ADD_COMMAND_FORMAT_OWNER_ONLY = Pattern.compile("-(o)+(?<ownerInfo>.*)");
     private static final Pattern ADD_COMMAND_FORMAT_NEW_PET_EXISTING_OWNER = Pattern.compile("-(p)+(?<petInfo>.*)"
-            + "-(o)+(?<ownerNric>.*)");
+        + "-(o)+(?<ownerNric>.*)");
     private static final Pattern ADD_COMMAND_FORMAT_NEW_APPT_EXISTING_OWNER_PET = Pattern.compile("-(a)+(?<apptInfo>.*)"
-            + "-(o)+(?<ownerNric>.*)" + "-(p)+(?<petName>.*)");
+        + "-(o)+(?<ownerNric>.*)" + "-(p)+(?<petName>.*)");
 
     /**
      * Parses the given {@code String} of arguments in the context of the Person class
@@ -500,12 +517,12 @@ public class AddCommandParser implements Parser<AddCommand> {
      */
     public Person parsePerson(String ownerInfo) throws ParseException {
         ArgumentMultimap argMultimapOwner =
-                ArgumentTokenizer.tokenize(ownerInfo, PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL,
-                        PREFIX_ADDRESS, PREFIX_NRIC, PREFIX_TAG);
+            ArgumentTokenizer.tokenize(ownerInfo, PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL,
+                PREFIX_ADDRESS, PREFIX_NRIC, PREFIX_TAG);
 
         if (!arePrefixesPresent(argMultimapOwner, PREFIX_NAME, PREFIX_ADDRESS, PREFIX_PHONE, PREFIX_EMAIL, PREFIX_NRIC)
-                || !argMultimapOwner.getPreamble().isEmpty()) {
-            throw new ParseException(String.format(MESSAGE_INVALID_PARAMETER_FORMAT, AddCommand.MESSAGE_PERSON));
+            || !argMultimapOwner.getPreamble().isEmpty()) {
+            throw new ParseException(String.format(MESSAGE_INVALID_PARAMETER_FORMAT, AddCommand.MESSAGE_ERROR_PERSON));
         }
 
         try {
@@ -517,8 +534,8 @@ public class AddCommandParser implements Parser<AddCommand> {
             Set<Tag> ownerTagList = ParserUtil.parseTags(argMultimapOwner.getAllValues(PREFIX_TAG));
 
             Person owner = new Person(ownerName, phone, email, address, nric, ownerTagList);
-
             return owner;
+
         } catch (IllegalValueException ive) {
             throw new ParseException(ive.getMessage(), ive);
         }
@@ -531,27 +548,31 @@ public class AddCommandParser implements Parser<AddCommand> {
      */
     public Appointment parseAppointment(String apptInfo) throws ParseException {
         ArgumentMultimap argMultimap =
-                ArgumentTokenizer.tokenize(apptInfo, PREFIX_DATE, PREFIX_REMARK, PREFIX_TAG);
+            ArgumentTokenizer.tokenize(apptInfo, PREFIX_DATE, PREFIX_REMARK, PREFIX_TAG);
 
         if (!arePrefixesPresent(argMultimap, PREFIX_DATE, PREFIX_REMARK, PREFIX_TAG)
-                || !argMultimap.getPreamble().isEmpty()) {
+            || !argMultimap.getPreamble().isEmpty()) {
             throw new ParseException(
-                    String.format(MESSAGE_INVALID_PARAMETER_FORMAT, AddCommand.MESSAGE_APPOINTMENT));
+                String.format(MESSAGE_INVALID_PARAMETER_FORMAT, AddCommand.MESSAGE_ERROR_APPOINTMENT));
         }
 
         try {
             LocalDateTime localDateTime = ParserUtil.parseDateTime(argMultimap.getValue(PREFIX_DATE)).get();
+            if (localDateTime.isBefore(LocalDateTime.now())) {
+                throw new PastAppointmentException();
+            }
+
             Remark remark = ParserUtil.parseRemark(argMultimap.getValue(PREFIX_REMARK)).get();
             Set<Tag> type = ParserUtil.parseTags(argMultimap.getAllValues(PREFIX_TAG));
 
             Appointment appointment = new Appointment(remark, localDateTime, type);
-
             return appointment;
+
         } catch (IllegalValueException ive) {
             throw new ParseException(ive.getMessage(), ive);
+
         }
     }
-
     /**
      * Parses the given {@code String} of arguments in the context of the PetPatient class
      * and returns an PetPatient object.
@@ -559,13 +580,14 @@ public class AddCommandParser implements Parser<AddCommand> {
      */
     public PetPatient parsePetPatient(String petInfo) throws ParseException {
         ArgumentMultimap argMultimap =
-                ArgumentTokenizer.tokenize(petInfo, PREFIX_NAME, PREFIX_SPECIES, PREFIX_BREED, PREFIX_COLOUR,
-                        PREFIX_BLOODTYPE, PREFIX_TAG);
+            ArgumentTokenizer.tokenize(petInfo, PREFIX_NAME, PREFIX_SPECIES, PREFIX_BREED, PREFIX_COLOUR,
+                PREFIX_BLOODTYPE, PREFIX_TAG);
 
         if (!arePrefixesPresent(
-                argMultimap, PREFIX_NAME, PREFIX_BREED, PREFIX_SPECIES, PREFIX_COLOUR, PREFIX_BLOODTYPE)
-                || !argMultimap.getPreamble().isEmpty()) {
-            throw new ParseException(String.format(MESSAGE_INVALID_PARAMETER_FORMAT, AddCommand.MESSAGE_PETPATIENT));
+            argMultimap, PREFIX_NAME, PREFIX_BREED, PREFIX_SPECIES, PREFIX_COLOUR, PREFIX_BLOODTYPE)
+            || !argMultimap.getPreamble().isEmpty()) {
+            throw new ParseException(String.format(MESSAGE_INVALID_PARAMETER_FORMAT,
+                    AddCommand.MESSAGE_ERROR_PETPATIENT));
         }
 
         try {
@@ -595,13 +617,13 @@ public class AddCommandParser implements Parser<AddCommand> {
 
         if (!arePrefixesPresent(argMultimap, PREFIX_NRIC) || !argMultimap.getPreamble().isEmpty()) {
             throw new ParseException(String.format(MESSAGE_INVALID_PARAMETER_FORMAT,
-                    AddCommand.MESSAGE_MISSING_NRIC_PREFIX));
+                AddCommand.MESSAGE_MISSING_NRIC_PREFIX));
         }
 
         try {
             Nric validNric = ParserUtil.parseNric(argMultimap.getValue(PREFIX_NRIC)).get();
-
             return validNric;
+
         } catch (IllegalValueException ive) {
             throw new ParseException(ive.getMessage(), ive);
         }
@@ -618,13 +640,13 @@ public class AddCommandParser implements Parser<AddCommand> {
 
         if (!arePrefixesPresent(argMultimap, PREFIX_NAME) || !argMultimap.getPreamble().isEmpty()) {
             throw new ParseException(String.format(MESSAGE_INVALID_PARAMETER_FORMAT,
-                    AddCommand.MESSAGE_MISSING_PET_PATIENT_NAME_PREFIX));
+                AddCommand.MESSAGE_MISSING_PET_PATIENT_NAME_PREFIX));
         }
 
         try {
             PetPatientName petPatientName = ParserUtil.parsePetPatientName(argMultimap.getValue(PREFIX_NAME)).get();
-
             return petPatientName;
+
         } catch (IllegalValueException ive) {
             throw new ParseException(ive.getMessage(), ive);
         }
@@ -636,7 +658,7 @@ public class AddCommandParser implements Parser<AddCommand> {
      * @throws ParseException if the user input does not conform the expected format.
      */
     private AddCommand createNewOwnerPetAppt(String ownerInfo, String petInfo, String apptInfo)
-            throws ParseException {
+        throws ParseException {
         Person owner = parsePerson(ownerInfo);
 
         PetPatient petPatient = parsePetPatient(petInfo);
@@ -655,7 +677,7 @@ public class AddCommandParser implements Parser<AddCommand> {
      * @throws ParseException if the user input does not conform the expected format.
      */
     private AddCommand createNewApptforExistingOwnerAndPet(String apptInfo, String ownerNric, String petName)
-            throws ParseException {
+        throws ParseException {
         Appointment appt = parseAppointment(apptInfo);
         Nric nric = parseNric(ownerNric);
         PetPatientName petPatientName = parsePetPatientName(petName);
@@ -735,7 +757,6 @@ public class AddCommandParser implements Parser<AddCommand> {
         //add a new person
         final Matcher matcherForNewPerson = ADD_COMMAND_FORMAT_OWNER_ONLY.matcher(trimmedArgs);
         if (matcherForNewPerson.matches()) {
-            System.out.println("MATCHES HERE");
             String ownerInfo = matcherForNewPerson.group("ownerInfo");
             return parseNewOwnerOnly(ownerInfo);
         }
@@ -839,6 +860,10 @@ public class ChangeThemeCommandParser implements Parser<ChangeThemeCommand> {
             PREFIX_REMARK_DESC, PREFIX_TAG_DESC)
             .collect(Collectors.toSet());
 
+    private static final Set<String> commandWordsWithOptionPrefix = Stream.of(
+            AddCommand.COMMAND_WORD, EditCommand.COMMAND_WORD, DeleteCommand.COMMAND_WORD, FindCommand.COMMAND_WORD,
+            ListAppointmentCommand.COMMAND_WORD).collect(Collectors.toSet());
+
     private static final Set<String> commandWords = Stream.of(
             AddCommand.COMMAND_WORD, EditCommand.COMMAND_WORD, DeleteCommand.COMMAND_WORD, ListCommand.COMMAND_WORD,
             FindCommand.COMMAND_WORD, ChangeThemeCommand.COMMAND_WORD, ClearCommand.COMMAND_WORD,
@@ -861,6 +886,10 @@ public class ChangeThemeCommandParser implements Parser<ChangeThemeCommand> {
 
     public Set<String> getCommandWords() {
         return CliSyntax.commandWords;
+    }
+
+    public Set<String> getCommandWordsWithOptionPrefix() {
+        return CliSyntax.commandWordsWithOptionPrefix;
     }
 
     public Set<String> getPrefixes() {
@@ -1064,7 +1093,7 @@ public class Autocomplete {
             return getCommandWordSuggestions();
         }
 
-        if (!targetWord.equals("")) {
+        if (!targetWord.equals("") && hasOptionsAndPrefixes()) {
             if (hasAddCommandReferNric() || hasEditCommandReferNric() || hasFindCommandReferNric()) {
                 return getNricSuggestions();
             }
@@ -1093,13 +1122,11 @@ public class Autocomplete {
                 return getTagSuggestions();
             }
 
-            if (hasOptionsAndPrefixes() && targetWord.startsWith("-")) {
+            if (targetWord.startsWith("-")) {
                 return getOptionSuggestions();
             }
 
-            if (hasOptionsAndPrefixes()) {
-                return getPrefixSuggestions();
-            }
+            return getPrefixSuggestions();
 
         } else {
 
@@ -1115,35 +1142,11 @@ public class Autocomplete {
      * Returns false if the command is one that does not require any options or prefixes in its syntax.
      */
     private boolean hasOptionsAndPrefixes() {
-        if (commandWord.equals(ClearCommand.COMMAND_WORD)) {
-            return false;
+        if (logic.getCommandWordsWithOptionPrefix().contains(commandWord)) {
+            return true;
         }
 
-        if (commandWord.equals(ListCommand.COMMAND_WORD)) {
-            return false;
-        }
-
-        if (commandWord.equals(ExitCommand.COMMAND_WORD)) {
-            return false;
-        }
-
-        if (commandWord.equals(UndoCommand.COMMAND_WORD)) {
-            return false;
-        }
-
-        if (commandWord.equals(RedoCommand.COMMAND_WORD)) {
-            return false;
-        }
-
-        if (commandWord.equals(HelpCommand.COMMAND_WORD)) {
-            return false;
-        }
-
-        if (commandWord.equals(HistoryCommand.COMMAND_WORD)) {
-            return false;
-        }
-
-        return true;
+        return false;
     }
 
     /**
@@ -1153,6 +1156,7 @@ public class Autocomplete {
      * Returns false if the command input is to add a new person.
      */
     private boolean hasAddCommandReferNric() {
+        // adding a new owner will not have autocomplete for Nric
         if (commandWord.equals(AddCommand.COMMAND_WORD)
                 && trimmedCommandInputArray[2].equals(OPTION_OWNER)) {
             return false;
@@ -1196,40 +1200,14 @@ public class Autocomplete {
     }
 
     /**
-     * Checks if command input {@code trimmedCommandInputArray} has reference to existing pet patients' names, and
-     * determine if autocomplete for pet patient names is necessary.
-     *
-     * Returns false if it is an add new pet patient command.
-     * Returns false if it is an add new owner, new pet patient & new appointment command.
-     * Returns false if it is an edit command.
-     * Returns false if it is a find command.
+     *Returns true if command input {@code trimmedCommandInput} is the syntax for adding a new appointment.
      */
     private boolean hasReferenceToExistingPetPatientNames() {
-        // Add new pet patient
-        if (commandWord.equals(AddCommand.COMMAND_WORD)
-                && trimmedCommandInputArray[2].equals(OPTION_PETPATIENT)
-                && targetWord.startsWith(PREFIX_NAME.toString())) {
-            return false;
-        }
+        final Pattern addNewAppointment = Pattern.compile(AddCommand.COMMAND_WORD + " -(a)+(?<apptInfo>.*)"
+                + "-(o)+(?<ownerNric>.*)" + "-(p)+(?<petName>.*)");
+        final Matcher matcherForNewAppt = addNewAppointment.matcher(trimmedCommandInput);
 
-        // Add new owner, new pet patient & new appointment
-        if (commandWord.equals(AddCommand.COMMAND_WORD)
-                && trimmedCommandInputArray[2].equals(OPTION_OWNER)
-                && trimmedCommandInputArray[trimmedCommandInputArray.length - 3].equals(OPTION_PETPATIENT)
-                && targetWord.startsWith(PREFIX_NAME.toString())) {
-            return false;
-        }
-
-        if (commandWord.equals(EditCommand.COMMAND_WORD)) {
-            return false;
-        }
-
-        if (commandWord.equals(FindCommand.COMMAND_WORD)) {
-            return false;
-        }
-
-        if (trimmedCommandInputArray[trimmedCommandInputArray.length - 3].equals(OPTION_PETPATIENT)
-                && targetWord.startsWith(PREFIX_NAME.toString())) {
+        if (matcherForNewAppt.matches()) {
             return true;
         }
 
@@ -1241,7 +1219,13 @@ public class Autocomplete {
      */
     private void setOption() {
         option = "nil";
-        int index = trimmedCommandInput.lastIndexOf("-");
+
+        int o = trimmedCommandInput.lastIndexOf(OPTION_OWNER);
+        int p = trimmedCommandInput.lastIndexOf(OPTION_PETPATIENT);
+        int a = trimmedCommandInput.lastIndexOf(OPTION_APPOINTMENT);
+
+        int index = (a > p) ? a : p;
+        index = (index > o) ? index : o;
 
         if (index > -1 && (trimmedCommandInput.length() >= index + 2)) {
             option = trimmedCommandInput.substring(index, index + 2); // (inclusive, exclusive)
@@ -1499,7 +1483,7 @@ public class Autocomplete {
     @Subscribe
     public void handleAddressBookChangedEvent(AddressBookChangedEvent a) {
         init(this.logic);
-        logger.info(LogsCenter.getEventHandlingLogMessage(a, "Local data changed,"
+        logger.info(LogsCenter.getEventHandlingLogMessage(a, "Local data has changed,"
                 + " update autocomplete data"));
     }
 
@@ -1507,6 +1491,28 @@ public class Autocomplete {
 ```
 ###### \java\seedu\address\ui\CommandBox.java
 ``` java
+    /**
+     * Toggles autocomplete on or off.
+     */
+    private void toggleAutocomplete() {
+        if (isAutocompleting) {
+            commandTextField.textProperty().removeListener(getAutocompleteListener());
+            isAutocompleting = false;
+            hideSuggestionBox();
+            logger.info("Autocomplete has been toggled [OFF]");
+        } else {
+            commandTextField.textProperty().addListener(getAutocompleteListener());
+            isAutocompleting = true;
+            logger.info("Autocomplete has been toggled [ON]");
+        }
+    }
+
+    private void hideSuggestionBox() {
+        if (suggestionBox.isShowing()) {
+            suggestionBox.hide();
+        }
+    }
+
     /**
      * Calls Autocomplete class to process commandTextField's content.
      *
@@ -1517,10 +1523,10 @@ public class Autocomplete {
 
         if (!newValue.equals("")) {
 
-            suggestions = autocompleteLogic.getSuggestions(commandTextField);
+            List<String> suggestions = autocompleteLogic.getSuggestions(commandTextField);
 
             if (!suggestions.isEmpty()) {
-                setContextMenu();
+                setContextMenu(suggestions);
             }
         }
     }
@@ -1528,7 +1534,7 @@ public class Autocomplete {
     /**
      * Sets the context menu {@code suggestionBox} with autocomplete suggestions.
      */
-    private void setContextMenu() {
+    private void setContextMenu(List<String> suggestions) {
         for (String s : suggestions) {
             MenuItem m = new MenuItem(s);
             String autocompleteValue = StringUtil.removeDescription(s);
@@ -1569,7 +1575,7 @@ public class Autocomplete {
     }
 
     /**
-     * Returns text in {@code commandTextField} based on {@code cursorPosition} and {@code userInputLength}.
+     * Returns remaining text in {@code commandTextField} after {@code cursorPosition}, if any.
      */
     private String getRemainingInput(int cursorPosition, int userInputLength) {
         String restOfInput = "";
@@ -1603,7 +1609,7 @@ public class Autocomplete {
      * Sets the default theme based on user preferences.
      */
     private void setWindowDefaultTheme(UserPrefs prefs) {
-        getRoot().getScene().getStylesheets().add(prefs.getGuiSettings().getApplicationTheme());
+        getRoot().getScene().getStylesheets().add(prefs.getGuiSettings().getCurrentTheme());
     }
 
     /**

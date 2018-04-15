@@ -41,11 +41,6 @@
  */
 public class AddCommandIntegrationTest {
 
-    private final String messageAddpetpatient = "New pet patient added: %1$s \nunder owner: %2$s";
-    private final String messageAddappointment = "New appointment made: %1$s\nunder owner: %2$s\nfor pet patient: %3$s";
-    private final String messageAddall = "New person added: %1$s\nNew pet patient added: %2$s\n"
-            + "New appointment made: %3$s";
-
     private Model model;
 
     @Before
@@ -61,7 +56,7 @@ public class AddCommandIntegrationTest {
         expectedModel.addPerson(validPerson);
 
         assertCommandSuccess(prepareCommand(validPerson, model), model,
-                String.format(AddCommand.MESSAGE_SUCCESS, validPerson), expectedModel);
+                String.format(AddCommand.MESSAGE_SUCCESS_PERSON, validPerson), expectedModel);
     }
 
     @Test
@@ -92,7 +87,7 @@ public class AddCommandIntegrationTest {
         expectedModel.addPetPatient(validPetPatient);
 
         assertCommandSuccess(prepareCommand(validPetPatient, validPerson.getNric(), model), model,
-                String.format(messageAddpetpatient, validPetPatient, validPerson), expectedModel);
+                String.format(AddCommand.MESSAGE_SUCCESS_PETPATIENT, validPetPatient, validPerson), expectedModel);
     }
 
     @Test
@@ -125,7 +120,7 @@ public class AddCommandIntegrationTest {
         expectedModel.addAppointment(appt);
 
         assertCommandSuccess(prepareCommand(appt, existing.getOwner(), existing.getName(), model), model,
-                String.format(messageAddappointment, appt, owner, existing), expectedModel);
+                String.format(AddCommand.MESSAGE_SUCCESS_APPOINTMENT, appt, owner, existing), expectedModel);
     }
 
     @Test
@@ -194,7 +189,7 @@ public class AddCommandIntegrationTest {
         expectedModel.addAppointment(newAppt);
 
         assertCommandSuccess(prepareCommand(newPerson, newPetPatient, newAppt, model), model,
-                String.format(messageAddall, newPerson, newPetPatient, newAppt), expectedModel);
+                String.format(AddCommand.MESSAGE_SUCCESS_EVERYTHING, newPerson, newPetPatient, newAppt), expectedModel);
     }
 
     /**
@@ -242,11 +237,6 @@ public class AddCommandTest {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
-    private final String messageAddpetpatient = "New pet patient added: %1$s \nunder owner: %2$s";
-    private final String messageAddappointment = "New appointment made: %1$s\nunder owner: %2$s\nfor pet patient: %3$s";
-    private final String messageAddall = "New person added: %1$s\nNew pet patient added: %2$s\n"
-            + "New appointment made: %3$s";
-
     @Test
     public void constructor_nullPersonPetPatientAppointment_throwsNullPointerException() {
         thrown.expect(NullPointerException.class);
@@ -278,14 +268,14 @@ public class AddCommandTest {
         //add a new person (a)
         Person validPerson = new PersonBuilder().build();
         CommandResult resultToAddPerson = getAddCommandForPerson(validPerson, modelStub).execute();
-        assertEquals(String.format(AddCommand.MESSAGE_SUCCESS, validPerson), resultToAddPerson.feedbackToUser);
+        assertEquals(String.format(AddCommand.MESSAGE_SUCCESS_PERSON, validPerson), resultToAddPerson.feedbackToUser);
         assertEquals(Arrays.asList(validPerson), modelStub.personsAdded);
 
         //add a new pet patient (b) under person (a)
         PetPatient validPetPatient = new PetPatientBuilder().build();
         CommandResult resultToAddPetPatient = getAddCommandForPetPatient(validPetPatient, validPerson.getNric(),
                 modelStub).execute();
-        assertEquals(String.format(messageAddpetpatient, validPetPatient, validPerson),
+        assertEquals(String.format(AddCommand.MESSAGE_SUCCESS_PETPATIENT, validPetPatient, validPerson),
                 resultToAddPetPatient.feedbackToUser);
         assertEquals(Arrays.asList(validPetPatient), modelStub.petPatientsAdded);
 
@@ -293,8 +283,8 @@ public class AddCommandTest {
         Appointment validAppointment = new AppointmentBuilder().build();
         CommandResult resultToAddAppointment = getAddCommandForAppointment(validAppointment, validPerson.getNric(),
                 validPetPatient.getName(), modelStub).execute();
-        assertEquals(String.format(messageAddappointment, validAppointment, validPerson, validPetPatient),
-                resultToAddAppointment.feedbackToUser);
+        assertEquals(String.format(AddCommand.MESSAGE_SUCCESS_APPOINTMENT, validAppointment, validPerson,
+                validPetPatient), resultToAddAppointment.feedbackToUser);
         assertEquals(Arrays.asList(validAppointment), modelStub.appointmentsAdded);
 
         //add new person, new pet patient and new appointment
@@ -303,7 +293,8 @@ public class AddCommandTest {
         Appointment newAppt = TypicalAppointments.BENSON_APP;
         CommandResult resultToAddAll = getAddCommandForNewPersonPetPatientAppointment(newPerson, newPetPatient, newAppt,
                 modelStub).execute();
-        assertEquals(String.format(messageAddall, newPerson, newPetPatient, newAppt), resultToAddAll.feedbackToUser);
+        assertEquals(String.format(AddCommand.MESSAGE_SUCCESS_EVERYTHING, newPerson, newPetPatient, newAppt),
+                resultToAddAll.feedbackToUser);
     }
 
     @Test
@@ -424,7 +415,6 @@ public class AddCommandTest {
         assertFalse(addAliceCommand.equals(addBobCommand));
         assertFalse(addJosephCommand.equals(addTiaCommand));
         assertFalse(addApptCommand.equals(addAppt2Command));
-
     }
 
     /**
@@ -571,6 +561,12 @@ public class AddCommandTest {
         public Appointment getClashingAppointment(LocalDateTime dateTime) {
             fail("This method should not be called.");
             return null;
+        }
+
+        @Override
+        public boolean hasConcurrentAppointment(LocalDateTime oldDateTime, LocalDateTime newDateTime) {
+            fail("This method should not be called.");
+            return false;
         }
 
         @Override
@@ -871,7 +867,7 @@ public class ChangeThemeCommandTest {
 
     @Test
     public void parse_compulsoryPetPatientFieldMissing_failure() {
-        String invalidPetPatient = String.format(MESSAGE_INVALID_PARAMETER_FORMAT, AddCommand.MESSAGE_PETPATIENT);
+        String invalidPetPatient = String.format(MESSAGE_INVALID_PARAMETER_FORMAT, AddCommand.MESSAGE_ERROR_PETPATIENT);
         String invalidAddCommand = String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddCommand.MESSAGE_USAGE);
         String missingNricPrefix = String.format(MESSAGE_INVALID_PARAMETER_FORMAT,
                 AddCommand.MESSAGE_MISSING_NRIC_PREFIX);
@@ -997,7 +993,7 @@ public class ChangeThemeCommandTest {
 
     @Test
     public void parse_compulsoryAppointmentFieldMissing_failure() {
-        String invalidAppt = String.format(MESSAGE_INVALID_PARAMETER_FORMAT, AddCommand.MESSAGE_APPOINTMENT);
+        String invalidAppt = String.format(MESSAGE_INVALID_PARAMETER_FORMAT, AddCommand.MESSAGE_ERROR_APPOINTMENT);
         String invalidCommand = String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddCommand.MESSAGE_USAGE);
 
         // missing date time prefix
@@ -1538,22 +1534,22 @@ public class TypicalThemes {
         /* Case: missing name -> rejected */
         command = AddCommand.COMMAND_WORD + " " + OPTION_OWNER + PHONE_DESC_AMY + EMAIL_DESC_AMY + ADDRESS_DESC_AMY
                 + NRIC_DESC_AMY;
-        assertCommandFailure(command, String.format(MESSAGE_INVALID_PARAMETER_FORMAT, AddCommand.MESSAGE_PERSON));
+        assertCommandFailure(command, String.format(MESSAGE_INVALID_PARAMETER_FORMAT, AddCommand.MESSAGE_ERROR_PERSON));
 
         /* Case: missing phone -> rejected */
         command = AddCommand.COMMAND_WORD + " " + OPTION_OWNER + NAME_DESC_AMY + EMAIL_DESC_AMY + ADDRESS_DESC_AMY
                 + NRIC_DESC_AMY;
-        assertCommandFailure(command, String.format(MESSAGE_INVALID_PARAMETER_FORMAT, AddCommand.MESSAGE_PERSON));
+        assertCommandFailure(command, String.format(MESSAGE_INVALID_PARAMETER_FORMAT, AddCommand.MESSAGE_ERROR_PERSON));
 
         /* Case: missing email -> rejected */
         command = AddCommand.COMMAND_WORD + " " + OPTION_OWNER + NAME_DESC_AMY + PHONE_DESC_AMY + ADDRESS_DESC_AMY
                 + NRIC_DESC_AMY;
-        assertCommandFailure(command, String.format(MESSAGE_INVALID_PARAMETER_FORMAT, AddCommand.MESSAGE_PERSON));
+        assertCommandFailure(command, String.format(MESSAGE_INVALID_PARAMETER_FORMAT, AddCommand.MESSAGE_ERROR_PERSON));
 
         /* Case: missing address -> rejected */
         command = AddCommand.COMMAND_WORD + " " + OPTION_OWNER + NAME_DESC_AMY + PHONE_DESC_AMY + EMAIL_DESC_AMY
                 + NRIC_DESC_AMY;
-        assertCommandFailure(command, String.format(MESSAGE_INVALID_PARAMETER_FORMAT, AddCommand.MESSAGE_PERSON));
+        assertCommandFailure(command, String.format(MESSAGE_INVALID_PARAMETER_FORMAT, AddCommand.MESSAGE_ERROR_PERSON));
 
 ```
 ###### \java\systemtests\AddCommandSystemTest.java
@@ -1566,27 +1562,32 @@ public class TypicalThemes {
         /* Case: missing pet patient name -> rejected */
         command = AddCommand.COMMAND_WORD + " " + OPTION_PET + SPECIES_DESC_NERO + BREED_DESC_NERO
                 + COLOUR_DESC_NERO + BLOODTYPE_DESC_NERO + OPTION_OWNER + NRIC_DESC_BOB;
-        assertCommandFailure(command, String.format(MESSAGE_INVALID_PARAMETER_FORMAT, AddCommand.MESSAGE_PETPATIENT));
+        assertCommandFailure(command, String.format(MESSAGE_INVALID_PARAMETER_FORMAT,
+                AddCommand.MESSAGE_ERROR_PETPATIENT));
 
         /* Case: missing pet patient species -> rejected */
         command = AddCommand.COMMAND_WORD + " " + OPTION_PET + NAME_DESC_NERO + BREED_DESC_NERO
                 + COLOUR_DESC_NERO + BLOODTYPE_DESC_NERO + OPTION_OWNER + NRIC_DESC_BOB;
-        assertCommandFailure(command, String.format(MESSAGE_INVALID_PARAMETER_FORMAT, AddCommand.MESSAGE_PETPATIENT));
+        assertCommandFailure(command, String.format(MESSAGE_INVALID_PARAMETER_FORMAT,
+                AddCommand.MESSAGE_ERROR_PETPATIENT));
 
         /* Case: missing pet patient breed -> rejected */
         command = AddCommand.COMMAND_WORD + " " + OPTION_PET + NAME_DESC_NERO + SPECIES_DESC_NERO
                 + COLOUR_DESC_NERO + BLOODTYPE_DESC_NERO + OPTION_OWNER + NRIC_DESC_BOB;
-        assertCommandFailure(command, String.format(MESSAGE_INVALID_PARAMETER_FORMAT, AddCommand.MESSAGE_PETPATIENT));
+        assertCommandFailure(command, String.format(MESSAGE_INVALID_PARAMETER_FORMAT,
+                AddCommand.MESSAGE_ERROR_PETPATIENT));
 
         /* Case: missing pet patient colour -> rejected */
         command = AddCommand.COMMAND_WORD + " " + OPTION_PET + NAME_DESC_NERO + SPECIES_DESC_NERO
                 + BREED_DESC_NERO + BLOODTYPE_DESC_NERO + OPTION_OWNER + NRIC_DESC_BOB;
-        assertCommandFailure(command, String.format(MESSAGE_INVALID_PARAMETER_FORMAT, AddCommand.MESSAGE_PETPATIENT));
+        assertCommandFailure(command, String.format(MESSAGE_INVALID_PARAMETER_FORMAT,
+                AddCommand.MESSAGE_ERROR_PETPATIENT));
 
         /* Case: missing pet patient blood type -> rejected */
         command = AddCommand.COMMAND_WORD + " " + OPTION_PET + NAME_DESC_NERO + SPECIES_DESC_NERO
                 + BREED_DESC_NERO + COLOUR_DESC_NERO + OPTION_OWNER + NRIC_DESC_BOB;
-        assertCommandFailure(command, String.format(MESSAGE_INVALID_PARAMETER_FORMAT, AddCommand.MESSAGE_PETPATIENT));
+        assertCommandFailure(command, String.format(MESSAGE_INVALID_PARAMETER_FORMAT,
+                AddCommand.MESSAGE_ERROR_PETPATIENT));
 
         /* Case: missing option and owner's nric -> rejected */
         command = AddCommand.COMMAND_WORD + " " + OPTION_PET + NAME_DESC_NERO + SPECIES_DESC_NERO
@@ -1604,21 +1605,21 @@ public class TypicalThemes {
                 + REMARK_DESC_THREE + TAG_DESC_VACCINATION + OPTION_OWNER + NRIC_DESC_BOB + OPTION_PET
                 + NAME_DESC_NERO;
         assertCommandFailure(command, String.format(MESSAGE_INVALID_PARAMETER_FORMAT,
-                AddCommand.MESSAGE_APPOINTMENT));
+                AddCommand.MESSAGE_ERROR_APPOINTMENT));
 
         /* Case: missing appointment remark -> rejected */
         command = AddCommand.COMMAND_WORD + OPTION_APPOINTMENT + DATE_DESC_THREE
                 + TAG_DESC_VACCINATION + OPTION_OWNER + NRIC_DESC_BOB + OPTION_PET
                 + NAME_DESC_NERO;
         assertCommandFailure(command, String.format(MESSAGE_INVALID_PARAMETER_FORMAT,
-                AddCommand.MESSAGE_APPOINTMENT));
+                AddCommand.MESSAGE_ERROR_APPOINTMENT));
 
         /* Case: missing appointment tag -> rejected */
         command = AddCommand.COMMAND_WORD + OPTION_APPOINTMENT + DATE_DESC_THREE
                 + REMARK_DESC_THREE + OPTION_OWNER + NRIC_DESC_BOB + OPTION_PET
                 + NAME_DESC_NERO;
         assertCommandFailure(command, String.format(MESSAGE_INVALID_PARAMETER_FORMAT,
-                AddCommand.MESSAGE_APPOINTMENT));
+                AddCommand.MESSAGE_ERROR_APPOINTMENT));
 
         /* Case: missing appointment's owner nric -> rejected */
         command = AddCommand.COMMAND_WORD + OPTION_APPOINTMENT + DATE_DESC_THREE
@@ -1675,8 +1676,6 @@ public class TypicalThemes {
             throw new CommandException(MESSAGE_INVALID_PET_PATIENT);
         }
 
-        String message = "New appointment made: %1$s\nunder owner: %2$s\nfor pet patient: %3$s";
-
         try {
             expectedModel.addAppointment(toAdd);
         } catch (DuplicateAppointmentException dae) {
@@ -1688,7 +1687,7 @@ public class TypicalThemes {
         } catch (PastAppointmentException p) {
             throw new IllegalArgumentException("this date has already past.");
         }
-        String expectedResultMessage = String.format(message, toAdd, owner, pet);
+        String expectedResultMessage = String.format(AddCommand.MESSAGE_SUCCESS_APPOINTMENT, toAdd, owner, pet);
 
         assertCommandSuccess(command, expectedModel, expectedResultMessage);
     }
@@ -1722,14 +1721,13 @@ public class TypicalThemes {
         if (owner == null) {
             throw new CommandException(MESSAGE_INVALID_NRIC);
         }
-        String message = "New pet patient added: %1$s \nunder owner: %2$s";
 
         try {
             expectedModel.addPetPatient(toAdd);
         } catch (DuplicatePetPatientException dpe) {
             throw new IllegalArgumentException("toAdd already exists in the model.");
         }
-        String expectedResultMessage = String.format(message, toAdd, owner);
+        String expectedResultMessage = String.format(AddCommand.MESSAGE_SUCCESS_PETPATIENT, toAdd, owner);
 
         assertCommandSuccess(command, expectedModel, expectedResultMessage);
     }
